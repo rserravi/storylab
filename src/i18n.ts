@@ -71,6 +71,23 @@ const dict: Record<Locale, Record<string, string>> = {
     's1.help.egri.title': 'Teoría de soporte — Egri',
     's1.help.themes.title': 'Temas universales — Ayuda',
 
+    // S3 — Puntos de giro
+
+    's3.title': 'S3 — Puntos de giro',
+    's3.subtitle': 'Define los plot points clave y vincúlalos a tus escenas.',
+    's3.help.general.title': 'Estructura de 3 actos — Ayuda',
+    's3.help.general.tooltip': 'Ver ayuda general',
+    's3.incidente': 'Incidente',
+    's3.momentoCambio': 'Momento de Cambio',
+    's3.puntoMedio': 'Punto Medio / Ordalía',
+    's3.crisis': 'Crisis',
+    's3.climax': 'Clímax',
+    's3.summary.label': 'Descripción / función dramática',
+    's3.link.label': 'Escena (opcional)',
+    's3.examples': 'Ejemplos',
+    's3.btn.ai': 'Propuesta IA',
+    's3.btn.ai.tooltip': 'Generar borrador (mock) con IA',
+
     // Etiquetas de temas (UI)
     'theme.Amor': 'Amor',
     'theme.Odio': 'Odio',
@@ -191,6 +208,23 @@ const dict: Record<Locale, Record<string, string>> = {
     's1.help.egri.title': 'Background theory — Egri',
     's1.help.themes.title': 'Universal themes — Help',
 
+    // S3 - Plot points
+
+    's3.title': 'S3 — Turning points',
+    's3.subtitle': 'Define the key plot points and link them to scenes.',
+    's3.help.general.title': 'Three-act structure — Help',
+    's3.help.general.tooltip': 'See general help',
+    's3.incidente': 'Inciting Incident',
+    's3.momentoCambio': 'Break into Act II',
+    's3.puntoMedio': 'Midpoint / Ordeal',
+    's3.crisis': 'Crisis',
+    's3.climax': 'Climax',
+    's3.summary.label': 'Description / dramatic function',
+    's3.link.label': 'Scene (optional)',
+    's3.examples': 'Examples',
+    's3.btn.ai': 'AI Proposal',
+    's3.btn.ai.tooltip': 'Generate draft (mock) with AI',
+
     // Theme labels (UI)
     'theme.Amor': 'Love',
     'theme.Odio': 'Hate',
@@ -310,6 +344,23 @@ const dict: Record<Locale, Record<string, string>> = {
     's1.help.egri.tooltip': 'Veure ajuda (teoria d’Egri)',
     's1.help.egri.title': 'Teoria de suport — Egri',
     's1.help.themes.title': 'Temes universals — Ajuda',
+
+    // S3 - Punts de Gir
+
+    's3.title': 'S3 — Punts de gir',
+    's3.subtitle': 'Defineix els plot points clau i enllaça’ls amb escenes.',
+    's3.help.general.title': 'Estructura de tres actes — Ajuda',
+    's3.help.general.tooltip': 'Veure ajuda general',
+    's3.incidente': 'Incident',
+    's3.momentoCambio': 'Moment de Canvi',
+    's3.puntoMedio': 'Punt Mig / Ordalía',
+    's3.crisis': 'Crisi',
+    's3.climax': 'Clímax',
+    's3.summary.label': 'Descripció / funció dramàtica',
+    's3.link.label': 'Escena (opcional)',
+    's3.examples': 'Exemples',
+    's3.btn.ai': 'Proposta IA',
+    's3.btn.ai.tooltip': 'Generar esborrany (mock) amb IA',
 
     // Etiquetes de temes (UI)
     'theme.Amor': 'Amor',
