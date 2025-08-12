@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useProjects } from '../../state/projectStore';
 import { useScreenplay } from '../../state/screenplayStore';
 
-import S1SynopsisEditor from './editors/S1SynopsisEditor';
+import S1SynopsisEditor from './editors/S1IdeationEditor';
 import S2TreatmentEditor from './editors/S2TreatmentEditor';
 import S3TurningPointsEditor from './editors/S3TurningPointsEditor';
 import S4CharactersEditor from './editors/S4CharactersEditor';

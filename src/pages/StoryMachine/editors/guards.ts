@@ -1,4 +1,4 @@
-import type { Screenplay, TurningPointType } from '../../../types';
+import type { Screenplay, TurningPointType, IdeaRow, UniversalTheme } from '../../../types';
 
 export const hasMinSynopsis = (synopsis?: string) => (synopsis?.trim().split(/\s+/).length || 0) >= 120;
 
@@ -25,3 +25,20 @@ export const hasMinKeyScenes = (scenes?: { isKey?: boolean }[]) =>
   (scenes||[]).filter(s => s.isKey).length >= 5;
 
 export const hasAllScenes = (scenes?: unknown[]) => (scenes||[]).length >= 30; // mock
+
+const CAUSAL_RE = /(conduce a|lleva a|provoca|desemboca en|termina en|da lugar a)/i;
+
+export const isValidIdea = (s?: string) => {
+  const n = (s || '').trim();
+  return n.length >= 8 && n.length <= 140;
+};
+
+export const isValidPremise = (s?: string) => {
+  const n = (s || '').trim();
+  return n.length >= 12 && CAUSAL_RE.test(n);
+};
+
+export const isValidTheme = (t?: UniversalTheme) => !!t;
+
+export const isValidIdeaRow = (r: IdeaRow) =>
+  isValidIdea(r.idea) && isValidPremise(r.premise) && isValidTheme(r.mainTheme);

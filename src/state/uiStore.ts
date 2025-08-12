@@ -1,26 +1,32 @@
 import { create } from 'zustand';
 
+type Locale = 'es' | 'en' | 'ca';
 type UiState = {
   darkMode: boolean;
-  lang: 'es' | 'en';
   toggleDark: () => void;
-  switchLang: (lang?: 'es'|'en') => void;
+  lang: Locale;
+  switchLang: () => void;      // compat: sigue existiendo
+  setLang: (lang: Locale) => void; // 👈 NUEVO
 };
 
-const LS_DARK = 'ui_dark';
-const LS_LANG = 'ui_lang';
-
 export const useUi = create<UiState>((set, get) => ({
-  darkMode: localStorage.getItem(LS_DARK) === '1',
-  lang: (localStorage.getItem(LS_LANG) as 'es'|'en') || 'es',
-  toggleDark: () => set(s => {
-    const next = !s.darkMode;
-    localStorage.setItem(LS_DARK, next ? '1' : '0');
-    return { darkMode: next };
-  }),
-  switchLang: (lang) => set(s => {
-    const next = lang || (s.lang === 'es' ? 'en' : 'es');
-    localStorage.setItem(LS_LANG, next);
-    return { lang: next };
-  })
+  darkMode: localStorage.getItem('darkMode') === 'true',
+  toggleDark: () =>
+    set((s) => {
+      const next = !s.darkMode;
+      localStorage.setItem('darkMode', String(next));
+      return { darkMode: next };
+    }),
+
+  lang: (localStorage.getItem('lang') as Locale) || 'es',
+  setLang: (lang) => {          // 👈 NUEVO
+    localStorage.setItem('lang', lang);
+    set({ lang });
+  },
+  switchLang: () => {           // (opcional) dejamos el ciclo por compatibilidad
+    const order: Locale[] = ['es', 'en', 'ca'];
+    const cur = get().lang;
+    const next = order[(order.indexOf(cur) + 1) % order.length];
+    get().setLang(next);
+  }
 }));

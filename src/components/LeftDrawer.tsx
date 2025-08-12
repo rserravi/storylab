@@ -1,8 +1,4 @@
-import {
-  Drawer, List, ListItemButton, ListItemIcon, ListItemText, Divider, Box,
-  useMediaQuery, Collapse, ListSubheader
-} from '@mui/material';
-import React from 'react';
+import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Divider, Box, Collapse, ListSubheader } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import MovieIcon from '@mui/icons-material/Movie';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -13,64 +9,76 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../state/authStore';
 import { useProjects } from '../state/projectStore';
+import { useEffect, useState } from 'react';
+import { useT } from '../i18n';
 
-const MACHINE_STEPS = [
-  { label: 'Sinopsis',        path: '/machine/s1' },
-  { label: 'Puntos de Giro',  path: '/machine/s3' },
-  { label: 'Tratamiento',     path: '/machine/s2' },
-  { label: 'Personajes',      path: '/machine/s4' },
-  { label: 'Subtramas',       path: '/machine/s5' },
-  { label: 'Escenas clave',   path: '/machine/s6' },
-  { label: 'Todas las escenas', path: '/machine/s7' }
-];
+const STEP_KEYS = [
+  'nav.machine.s1',
+  'nav.machine.s3',
+  'nav.machine.s2',
+  'nav.machine.s4',
+  'nav.machine.s5',
+  'nav.machine.s6',
+  'nav.machine.s7'
+] as const;
+
+const STEP_PATHS = [
+  '/machine/s1',
+  '/machine/s3',
+  '/machine/s2',
+  '/machine/s4',
+  '/machine/s5',
+  '/machine/s6',
+  '/machine/s7'
+] as const;
 
 export default function LeftDrawer({ width, open, onClose }: { width: number; open: boolean; onClose: () => void; }) {
+  const t = useT();
   const nav = useNavigate();
   const loc = useLocation();
-  const isSmall = useMediaQuery('(max-width:900px)');
   const { logout, user } = useAuth();
   const { projects, activeProjectId, setActive } = useProjects();
 
   const inMachine = loc.pathname.startsWith('/machine');
-  const [openMachine, setOpenMachine] = React.useState(inMachine);
+  const [openMachine, setOpenMachine] = useState(inMachine);
 
-  const go = (path: string) => { nav(path); if (isSmall) onClose(); };
+  useEffect(() => { setOpenMachine(inMachine); }, [inMachine]);
+
+  const go = (path: string) => { nav(path); onClose(); };
 
   return (
     <Drawer
-      variant={isSmall ? 'temporary' : 'permanent'}
+      variant="temporary"
       open={open}
       onClose={onClose}
+      ModalProps={{ keepMounted: true }}
       sx={{ '& .MuiDrawer-paper': { width, boxSizing: 'border-box' } }}
     >
-      <Box sx={{ p: 2, fontWeight: 700 }}>StoryLab</Box>
+      <Box sx={{ p: 2, fontWeight: 700 }}>{t('brand')}</Box>
       <Divider />
 
       <List>
         <ListItemButton selected={loc.pathname.startsWith('/projects')} onClick={() => go('/projects')}>
           <ListItemIcon><FolderIcon /></ListItemIcon>
-          <ListItemText primary="Proyectos" />
+          <ListItemText primary={t('nav.projects')} />
         </ListItemButton>
 
-        {/* Story Machine padre */}
         <ListItemButton selected={inMachine} onClick={() => { setOpenMachine(!openMachine); if (!inMachine) go('/machine/s1'); }}>
           <ListItemIcon><DashboardIcon /></ListItemIcon>
-          <ListItemText primary="Story Machine" />
+          <ListItemText primary={t('nav.storyMachine')} />
           {openMachine ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
 
-        {/* Submenú de pasos */}
         <Collapse in={openMachine} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding
-                subheader={<ListSubheader component="div">Pasos</ListSubheader>}>
-            {MACHINE_STEPS.map(s => (
+          <List component="div" disablePadding subheader={<ListSubheader component="div">{t('nav.steps')}</ListSubheader>}>
+            {STEP_KEYS.map((key, i) => (
               <ListItemButton
-                key={s.path}
+                key={key}
                 sx={{ pl: 4 }}
-                selected={loc.pathname === s.path}
-                onClick={() => go(s.path)}
+                selected={loc.pathname === STEP_PATHS[i]}
+                onClick={() => go(STEP_PATHS[i])}
               >
-                <ListItemText primary={s.label} />
+                <ListItemText primary={t(key)} />
               </ListItemButton>
             ))}
           </List>
@@ -78,15 +86,15 @@ export default function LeftDrawer({ width, open, onClose }: { width: number; op
 
         <ListItemButton selected={loc.pathname.startsWith('/draft')} onClick={() => go('/draft')}>
           <ListItemIcon><EditNoteIcon /></ListItemIcon>
-          <ListItemText primary="Story Draft" />
+          <ListItemText primary={t('nav.storyDraft')} />
         </ListItemButton>
       </List>
 
       <Divider />
-      <Box sx={{ px: 2, py: 1, fontSize: 12, opacity: .8 }}>Proyecto activo</Box>
+      <Box sx={{ px: 2, py: 1, fontSize: 12, opacity: .8 }}>{t('nav.activeProject')}</Box>
       <List dense>
         {projects.map(p => (
-          <ListItemButton key={p.id} selected={p.id === activeProjectId} onClick={() => setActive(p.id)}>
+          <ListItemButton key={p.id} selected={p.id === activeProjectId} onClick={() => { setActive(p.id); onClose(); }}>
             <ListItemIcon><MovieIcon /></ListItemIcon>
             <ListItemText primary={p.name} />
           </ListItemButton>
@@ -96,9 +104,9 @@ export default function LeftDrawer({ width, open, onClose }: { width: number; op
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
       <List>
-        <ListItemButton onClick={async () => { await logout(); nav('/login'); }}>
+        <ListItemButton onClick={async () => { await logout(); go('/login'); }}>
           <ListItemIcon><LogoutIcon /></ListItemIcon>
-          <ListItemText primary={`Salir (${user?.name || user?.email})`} />
+          <ListItemText primary={`${t('action.logout')} (${user?.name || user?.email})`} />
         </ListItemButton>
       </List>
     </Drawer>
