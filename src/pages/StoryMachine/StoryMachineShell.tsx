@@ -1,5 +1,4 @@
-import { Box, Paper, Typography, TextField, Button, Chip } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Box, Paper, Typography, TextField } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useProjects } from '../../state/projectStore';
@@ -23,34 +22,6 @@ export default function StoryMachineShell() {
 
       {/* Aquí se renderiza el editor de la sección activa (S1…S7) */}
       <Outlet />
-
-      {/* Tarjetas de escenas */}
-      <Paper sx={{ p:2, mt:2, mb:1 }}>
-        <Typography variant="subtitle1">Tarjetas de escenas</Typography>
-      </Paper>
-      <Grid container spacing={2}>
-        {(screenplay?.scenes || []).map(s => (
-          <Grid key={s.id} size={{ xs:12, md:6, lg:4 }}>
-            <Paper sx={{ p:2 }}>
-              <Typography variant="subtitle2">{s.slugline}</Typography>
-              <Chip size="small" label={s.isKey? 'Clave' : 'Normal'} sx={{ mt:1 }} />
-              <TextField
-                label="Sinopsis" multiline minRows={3} sx={{ mt:1 }}
-                value={s.synopsis} onChange={e=>upsertScene({ id: s.id, synopsis: e.target.value })}
-              />
-              <Button sx={{ mt:1 }}>Proponer con IA (mock)</Button>
-            </Paper>
-          </Grid>
-        ))}
-        <Grid size={12}>
-          <Button onClick={()=>upsertScene({ isKey:false, slugline:'INT. APARTMENT - NIGHT', synopsis:'Nueva escena' })}>
-            + Añadir escena
-          </Button>
-          <Button sx={{ ml:1 }} onClick={()=>upsertScene({ isKey:true, slugline:'EXT. ROOFTOP - DAY', synopsis:'Escena clave' })}>
-            + Añadir escena clave
-          </Button>
-        </Grid>
-      </Grid>
     </Box>
   );
 }

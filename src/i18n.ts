@@ -25,19 +25,19 @@ const dict: Record<Locale, Record<string, string>> = {
     'nav.steps': 'Pasos',
 
     // Story Machine — pasos
-    'nav.machine.s1': 'S1 — Ideación (Egri)',
+    'nav.machine.s1': 'Ideación',
     'nav.machine.s2': 'Tratamiento',
     'nav.machine.s3': 'Puntos de Giro',
     'nav.machine.s4': 'Personajes',
     'nav.machine.s5': 'Subtramas',
-    'nav.machine.s6': 'Escenas clave',
-    'nav.machine.s7': 'Todas las escenas',
+    'nav.machine.s6': 'Localizaciones',
+    'nav.machine.s7': 'Escenas',
 
     // AppBar
     'project.none': 'Sin proyecto',
 
     // ===== S1 — Ideación (Egri) =====
-    's1.title': 'S1 — Ideación (Egri): Idea + Premisa + Tema + Género',
+    's1.title': 'Ideación: Idea + Premisa + Tema + Género',
     's1.subtitle': 'Define hasta 5 ideas. Cada una lleva una Premisa (proposición causal de Egri), un Tema principal y un Género.',
     's1.idea': 'Idea',
     's1.idea.label': 'IDEA (frase 8–140 caracteres)',
@@ -73,7 +73,7 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // S3 — Puntos de giro
 
-    's3.title': 'S3 — Puntos de giro',
+    's3.title': 'Puntos de giro',
     's3.subtitle': 'Define los plot points clave y vincúlalos a tus escenas.',
     's3.help.general.title': 'Estructura de 3 actos — Ayuda',
     's3.help.general.tooltip': 'Ver ayuda general',
@@ -89,7 +89,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's3.btn.ai.tooltip': 'Generar borrador (mock) con IA',
 
     // S4 - Personajes
-    's4.title': 'S4 — Personajes',
+    's4.title': 'Personajes',
     's4.add': 'Añadir personaje',
     's4.edit': 'Editar',
     's4.delete': 'Eliminar',
@@ -127,6 +127,16 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.search.placeholder': 'Nombre, arquetipos, rasgos, conflicto…',
     's4.search.results': '{n} resultados',
     's4.search.noResults': 'No se han encontrado personajes',
+
+    // S6 - Localizaciones
+    's6.title': 'Localizaciones',
+    's6.add': 'Añadir localización',
+    's6.edit': 'Editar localización',
+    's6.name': 'Nombre',
+    's6.description': 'Descripción',
+    's6.upload': 'Subir imágenes',
+    's6.photos': 'Fotos',
+    's6.scenes': 'Escenas',
 
     // Niveles de conflicto (etiquetas UI)
     's4.conflict.level.extrapersonal': 'Extrapersonal',
@@ -216,19 +226,19 @@ const dict: Record<Locale, Record<string, string>> = {
     'nav.steps': 'Steps',
 
     // Story Machine — steps
-    'nav.machine.s1': 'S1 — Ideation (Egri)',
+    'nav.machine.s1': 'Ideation',
     'nav.machine.s2': 'Treatment',
     'nav.machine.s3': 'Turning points',
     'nav.machine.s4': 'Characters',
     'nav.machine.s5': 'Subplots',
-    'nav.machine.s6': 'Key scenes',
-    'nav.machine.s7': 'All scenes',
+    'nav.machine.s6': 'Locations',
+    'nav.machine.s7': 'Scenes',
 
     // AppBar
     'project.none': 'No project',
 
     // ===== S1 =====
-    's1.title': 'S1 — Ideation (Egri): Idea + Premise + Theme + Genre',
+    's1.title': 'Ideation: Idea + Premise + Theme + Genre',
     's1.subtitle': "Define up to 5 ideas. Each one has a Premise (Egri’s causal proposition), a main Theme and a Genre.",
     's1.idea': 'Idea',
     's1.idea.label': 'IDEA (single sentence 8–140 chars)',
@@ -264,7 +274,7 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // S3 - Plot points
 
-    's3.title': 'S3 — Turning points',
+    's3.title': 'Turning points',
     's3.subtitle': 'Define the key plot points and link them to scenes.',
     's3.help.general.title': 'Three-act structure — Help',
     's3.help.general.tooltip': 'See general help',
@@ -280,7 +290,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's3.btn.ai.tooltip': 'Generate draft (mock) with AI',
 
     // S4 - Characters
-    's4.title': 'S4 — Characters',
+    's4.title': 'Characters',
     's4.add': 'Add character',
     's4.edit': 'Edit',
     's4.delete': 'Delete',
@@ -330,6 +340,16 @@ const dict: Record<Locale, Record<string, string>> = {
     'arch.trickster': 'Trickster',
     'arch.shadow': 'Shadow',
     'arch.shapeshifter': 'Shapeshifter',
+
+    // S6 - Localizaciones
+    's6.title': 'Locations',
+    's6.add': 'Add location',
+    's6.edit': 'Edit location',
+    's6.name': 'Name',
+    's6.description': 'Description',
+    's6.upload': 'Upload images',
+    's6.photos': 'Photos',
+    's6.scenes': 'Scenes',
 
     // Theme labels (UI)
     'theme.Amor': 'Love',
@@ -405,19 +425,19 @@ const dict: Record<Locale, Record<string, string>> = {
     'nav.steps': 'Passes',
 
     // Story Machine — passes
-    'nav.machine.s1': 'S1 — Ideació (Egri)',
+    'nav.machine.s1': 'Ideació',
     'nav.machine.s2': 'Tractament',
     'nav.machine.s3': 'Punts de gir',
     'nav.machine.s4': 'Personatges',
     'nav.machine.s5': 'Subtrames',
-    'nav.machine.s6': 'Escenes clau',
-    'nav.machine.s7': 'Totes les escenes',
+    'nav.machine.s6': 'Localitzacions',
+    'nav.machine.s7': 'Escenes',
 
     // AppBar
     'project.none': 'Sense projecte',
 
     // ===== S1 — Ideació (Egri) =====
-    's1.title': 'S1 — Ideació (Egri): Idea + Premissa + Tema + Gènere',
+    's1.title': 'Ideació: Idea + Premissa + Tema + Gènere',
     's1.subtitle': 'Defineix fins a 5 idees. Cada una porta una Premissa (proposició causal d’Egri), un Tema principal i un Gènere.',
     's1.idea': 'Idea',
     's1.idea.label': 'IDEA (frase de 8–140 caràcters)',
@@ -453,7 +473,7 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // S3 - Punts de Gir
 
-    's3.title': 'S3 — Punts de gir',
+    's3.title': 'Punts de gir',
     's3.subtitle': 'Defineix els plot points clau i enllaça’ls amb escenes.',
     's3.help.general.title': 'Estructura de tres actes — Ajuda',
     's3.help.general.tooltip': 'Veure ajuda general',
@@ -469,7 +489,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's3.btn.ai.tooltip': 'Generar esborrany (mock) amb IA',
 
     // S4 - Personatges
-    's4.title': 'S4 — Personatges',
+    's4.title': 'Personatges',
     's4.add': 'Afegir personatge',
     's4.edit': 'Editar',
     's4.delete': 'Eliminar',
@@ -520,6 +540,15 @@ const dict: Record<Locale, Record<string, string>> = {
     'arch.shadow': 'Ombra',
     'arch.shapeshifter': 'Camaleó / Canviant',
 
+    // S6 - Localizaciones
+    's6.title': 'Localitzacions',
+    's6.add': 'Afegir localització',
+    's6.edit': 'Editar localització',
+    's6.name': 'Nom',
+    's6.description': 'Descripció',
+    's6.upload': 'Pujar imatges',
+    's6.photos': 'Fotos',
+    's6.scenes': 'Escenes',
 
     // Etiquetes de temes (UI)
     'theme.Amor': 'Amor',

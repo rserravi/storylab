@@ -28,6 +28,9 @@
     "@tiptap/extension-heading": "^2.3.2",
     "@tiptap/extension-underline": "^2.3.2",
     "@tiptap/extension-placeholder": "^2.3.2",
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/modifiers": "^7.0.0",
     "turndown": "^7.2.0",
     "marked": "^12.0.2"
   },

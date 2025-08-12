@@ -4,8 +4,15 @@ export type TurningPointType = 'inciting'|'lockin'|'midpoint'|'crisis'|'climax';
 export type ConflictLevel = 'Extrapersonal' | 'Personal' | 'Interno';
 
 export type Scene = {
-  id: string; number: number; slugline: string; characters: string[];
-  synopsis: string; isKey: boolean;
+  id: string;
+  locationName: string;        // guardamos el texto (índice por nombre)
+  placeType: ScenePlaceType;   // INT / EXT / NA
+  timeOfDay: TimeOfDay;        // DAY / NIGHT / OTHER
+  plotPoint?: PlotPointKey;    // opcional, si es un plot point
+  description: string;         // descripción de la escena
+  purpose: string;             // "función" de la escena
+  subplotId?: string | null;   // trama opcional
+  characterIds: string[];      // ids de S4
 };
 
 export type UniversalTheme =
@@ -30,10 +37,12 @@ export type Screenplay = {
   id: string; 
   title: string; 
   projectId: string;
-  synopsis?: string; treatment?: string;
+  synopsis?: string; 
+  treatment?: string;
   turningPoints?: { id: string; type: TurningPointType; summary: string }[];
-  subplots?: { id: string; name: string; purpose?: string; beats?: string[] }[];
+  subplots?: Subplot[];
   scenes: Scene[]; 
+  locations?: Location[];
   ideation?: {
     rows: IdeaRow[];         // 1..5
     decidedRowId?: string;   // cuál se eligió (opcional)
@@ -63,4 +72,24 @@ export type Character = {
   paradoxes: string;      // Paradojas/Contradicciones
   biography: string;     // Biografía
   voice: string;        // Voz propia
+};
+
+export type TimeOfDay = 'DAY' | 'NIGHT' | 'OTHER';
+export type ScenePlaceType = 'INT' | 'EXT' | 'NA';
+
+export type PlotPointKey = 'incidente' | 'momentoCambio' | 'puntoMedio' | 'crisis' | 'climax';
+
+export type Location = {
+  id: string;
+  name: string;
+  notes?: string;
+  description?: string;
+  images?: { id: string; src: string; name?: string }[];
+  tags?: string[];
+};
+
+export type Subplot = {
+  id: string;
+  name: string;
+  color?: string;
 };

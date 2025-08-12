@@ -13,7 +13,7 @@ import S2TreatmentEditor from './pages/StoryMachine/editors/S2TreatmentEditor';
 import S3TurningPointsEditor from './pages/StoryMachine/editors/S3TurningPointsEditor';
 import S4CharactersEditor from './pages/StoryMachine/editors/S4CharactersEditor';
 import S5SubplotsEditor from './pages/StoryMachine/editors/S5SubplotsEditor';
-import S6KeyScenesEditor from './pages/StoryMachine/editors/S6KeyScenesEditor';
+import S6KeyScenesEditor from './pages/StoryMachine/editors/S6LocationEditor';
 import S7AllScenesEditor from './pages/StoryMachine/editors/S7AllScenesEditor';
 
 import { useEffect } from 'react';
