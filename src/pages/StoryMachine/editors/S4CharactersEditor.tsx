@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import {
   Box, Paper, Stack, Typography, Button, IconButton, Chip, Divider,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Tooltip,
-  Grid, Popover
+  Grid, Popover, InputAdornment
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,13 +11,15 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PersonIcon from '@mui/icons-material/Person';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ArticleIcon from '@mui/icons-material/Article';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
 import type { Character, CharacterRelation, ConflictLevel } from '../../../types';
 import { ARCHETYPES } from '../../../data/archetypes';
 import { TRAIT_SUGGESTIONS } from '../../../data/traits';
-import { useT } from '../../../i18n';
+import { useT, useTx } from '../../../i18n';
 
 /* ───────────────── helpers de etiquetado i18n (guardamos valores en ES) ───────────────── */
 
@@ -106,14 +108,18 @@ function normalizeDraft(d: Character): Character {
 
 export default function S4CharactersEditor() {
   const t = useT();
+  const tx = useTx();
   const { screenplay, patch } = useScreenplay();
   const characters = screenplay?.characters ?? [];
 
   const [editing, setEditing] = useState<Character | null>(null);
 
-  // Popovers (detalle rápido sin salir al modal)
+  // Popovers (detalle rápido)
   const [bioOpen, setBioOpen] = useState<{ id: string; anchor: HTMLElement } | null>(null);
   const [relOpen, setRelOpen] = useState<{ id: string; anchor: HTMLElement } | null>(null);
+
+  // Buscador
+  const [q, setQ] = useState('');
 
   const addCharacter = () => {
     patch({ characters: [...characters, createEmpty()] });
@@ -127,31 +133,86 @@ export default function S4CharactersEditor() {
     patch({ characters: cleaned });
   };
 
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    if (!term) return characters;
+    const matches = (s?: string) => (s || '').toLowerCase().includes(term);
+    return characters.filter(c => {
+      // nombre, arquetipos, rasgos, conflicto, arco, necesidades, bio, voz, relaciones
+      if (matches(c.name)) return true;
+      if (c.archetypes?.some(a => matches(a))) return true;
+      if (c.nature?.some(n => matches(n))) return true;
+      if (c.attitude?.some(a => matches(a))) return true;
+      if (matches(c.conflictLevel)) return true;
+      if (matches(c.conflictDesc)) return true;
+      if (matches(c.arc)) return true;
+      if (matches(c.needGlobal) || matches(c.needH1) || matches(c.needH2)) return true;
+      if (matches(c.biography) || matches(c.voice) || matches(c.paradoxes)) return true;
+      if (c.relations?.some(r => matches(r.description))) return true;
+      return false;
+    });
+  }, [characters, q]);
+
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb:2 }}>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>{t('s4.title')}</Typography>
-        <Button startIcon={<AddIcon/>} onClick={addCharacter}>{t('s4.add')}</Button>
+      {/* Header con buscador */}
+      <Stack spacing={1.25} sx={{ mb: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>{t('s4.title')}</Typography>
+          <Button startIcon={<AddIcon/>} onClick={addCharacter}>{t('s4.add')}</Button>
+        </Stack>
+
+        <TextField
+          variant="outlined"
+          size="small"
+          label={t('s4.search.label')}
+          placeholder={t('s4.search.placeholder')}
+          value={q}
+          onChange={(e)=>setQ(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+            endAdornment: q ? (
+              <InputAdornment position="end">
+                <IconButton size="small" onClick={()=>setQ('')}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </InputAdornment>
+            ) : null
+          }}
+        />
+        <Typography variant="caption" sx={{ opacity:.7 }}>
+          {tx('s4.search.results', { n: filtered.length })}
+        </Typography>
       </Stack>
 
-      {/* Dos columnas en desktop */}
-      <Grid container spacing={2}>
-        {characters.map((c) => (
-          <Grid key={c.id} size={{ xs: 12, md: 6, lg: 6 }}>
-            <CompactCharacterCard
-              c={c}
-              all={characters}
-              t={t}
-              onEdit={() => setEditing(c)}
-              onDelete={() => removeCharacter(c.id)}
-              onOpenBio={(anchor) => setBioOpen({ id: c.id, anchor })}
-              onOpenRelations={(anchor) => setRelOpen({ id: c.id, anchor })}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {/* Resultado: cards en dos columnas */}
+      {filtered.length === 0 ? (
+        <Paper variant="outlined" sx={{ p: 2 }}>
+          <Typography variant="body2">{t('s4.search.noResults')}</Typography>
+        </Paper>
+      ) : (
+        <Grid container spacing={2}>
+          {filtered.map((c) => (
+            <Grid key={c.id} size={{ xs: 12, md: 6, lg: 6 }}>
+              <CompactCharacterCard
+                c={c}
+                all={characters}
+                t={t}
+                onEdit={() => setEditing(c)}
+                onDelete={() => removeCharacter(c.id)}
+                onOpenBio={(anchor) => setBioOpen({ id: c.id, anchor })}
+                onOpenRelations={(anchor) => setRelOpen({ id: c.id, anchor })}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
-      {/* Modal de edición completo */}
+      {/* Modal de edición */}
       {editing && (
         <EditCharacterDialog
           open={!!editing}
@@ -209,7 +270,7 @@ export default function S4CharactersEditor() {
   );
 }
 
-/* ───────────────── Card compacta (Opción A + popovers para Bio/Relaciones) ───────────────── */
+/* ───────────────── Card compacta (se mantiene) ───────────────── */
 
 function CompactCharacterCard({
   c, all, t,
@@ -265,7 +326,7 @@ function CompactCharacterCard({
 
       <Divider sx={{ my: 1 }} />
 
-      {/* Naturaleza / Actitud (líneas compactas con +N y tooltip full) */}
+      {/* Naturaleza / Actitud */}
       <Box sx={{ mb: .5 }}>
         <LabelLine label={t('s4.card.nature')} summary={nature} />
         <LabelLine label={t('s4.card.attitude')} summary={attitude} />
@@ -298,7 +359,7 @@ function CompactCharacterCard({
 
       <Divider sx={{ my: 1 }} />
 
-      {/* Footer denso: Conflicto + Relaciones (popover) + Voz + Bio (popover) */}
+      {/* Footer: Conflicto + Relaciones (popover) + Voz + Bio (popover) */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
         <Chip
           size="small"
@@ -323,7 +384,7 @@ function CompactCharacterCard({
           </span>
         </Tooltip>
 
-        {/* Voz corta (clamp 1) */}
+        {/* Voz corta */}
         {voiceShort ? (
           <Typography
             variant="body2"
@@ -378,7 +439,7 @@ function LabelLine({ label, summary }: { label: string; summary: { text: string;
   );
 }
 
-/* ───────────────── Modal de edición (sin cambios funcionales) ───────────────── */
+/* ───────────────── Modal de edición (igual que antes) ───────────────── */
 
 type EditProps = {
   open: boolean;
@@ -476,7 +537,11 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb:1 }}>
               <Typography variant="subtitle2">{t('s4.card.relations')}</Typography>
               <Box sx={{ flexGrow:1 }} />
-              <Button onClick={addRelation} disabled={otherCharacters.length === 0}>{t('s4.relations.add')}</Button>
+              <Button onClick={()=>{
+                if (!canRelate) return;
+                const first = otherCharacters[0]?.id;
+                set({ relations: [...(draft.relations ?? []), { id: crypto.randomUUID(), targetId: first, description: '' }] });
+              }} disabled={!canRelate}>{t('s4.relations.add')}</Button>
             </Stack>
 
             {(draft.relations ?? []).length === 0 ? (
@@ -501,7 +566,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
                       onChange={(e)=> set({ relations: (draft.relations ?? []).map(x => x.id === r.id ? { ...x, description: e.target.value } : x) })}
                       fullWidth
                     />
-                    <IconButton onClick={()=> removeRelation(r.id)} color="error"><DeleteOutlineIcon/></IconButton>
+                    <IconButton onClick={()=> set({ relations: (draft.relations ?? []).filter(x => x.id !== r.id) })} color="error"><DeleteOutlineIcon/></IconButton>
                   </Stack>
                 ))}
               </Stack>

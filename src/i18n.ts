@@ -123,6 +123,11 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.cancel': 'Cancelar',
     's4.modal.save': 'Guardar',
 
+    's4.search.label': 'Buscar',
+    's4.search.placeholder': 'Nombre, arquetipos, rasgos, conflicto…',
+    's4.search.results': '{n} resultados',
+    's4.search.noResults': 'No se han encontrado personajes',
+
     // Niveles de conflicto (etiquetas UI)
     's4.conflict.level.extrapersonal': 'Extrapersonal',
     's4.conflict.level.personal': 'Personal',
@@ -313,6 +318,11 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.conflict.level.personal': 'Personal',
     's4.conflict.level.internal': 'Internal',
 
+    's4.search.label': 'Search',
+    's4.search.placeholder': 'Name, archetypes, traits, conflict…',
+    's4.search.results': '{n} results',
+    's4.search.noResults': 'No characters found',
+
     'arch.hero': 'Hero',
     'arch.mentor': 'Mentor',
     'arch.threshold': 'Threshold Guardian',
@@ -497,6 +507,11 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.conflict.level.personal': 'Personal',
     's4.conflict.level.internal': 'Intern',
 
+    's4.search.label': 'Cercar',
+    's4.search.placeholder': 'Nom, arquetips, trets, conflicte…',
+    's4.search.results': '{n} resultats',
+    's4.search.noResults': 'No s’han trobat personatges',
+
     'arch.hero': 'Heroi',
     'arch.mentor': 'Mentor',
     'arch.threshold': 'Guardià (del llindar)',
@@ -504,6 +519,7 @@ const dict: Record<Locale, Record<string, string>> = {
     'arch.trickster': 'Pícar / Embaucador',
     'arch.shadow': 'Ombra',
     'arch.shapeshifter': 'Camaleó / Canviant',
+
 
     // Etiquetes de temes (UI)
     'theme.Amor': 'Amor',
