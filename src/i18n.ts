@@ -88,6 +88,55 @@ const dict: Record<Locale, Record<string, string>> = {
     's3.btn.ai': 'Propuesta IA',
     's3.btn.ai.tooltip': 'Generar borrador (mock) con IA',
 
+    // S4 - Personajes
+    's4.title': 'S4 — Personajes',
+    's4.add': 'Añadir personaje',
+    's4.edit': 'Editar',
+    's4.delete': 'Eliminar',
+    's4.noname': 'Sin nombre',
+
+    's4.card.archetypes': 'Arquetipos (Vogler)',
+    's4.card.nature': 'Naturaleza',
+    's4.card.attitude': 'Actitud',
+    's4.card.need.global': 'Necesidad dramática — Global',
+    's4.card.need.h1': 'Necesidad dramática — 1ª mitad (hasta Ordalía)',
+    's4.card.need.h2': 'Necesidad dramática — 2ª mitad (tras Ordalía)',
+    's4.card.arc': 'Evolución (arco de personaje)',
+    's4.card.conflict': 'Conflicto (McKee)',
+    's4.card.conflict.level': 'Conflicto — nivel (McKee)',
+    's4.card.conflict.desc': 'Conflicto — descripción',
+    's4.card.relations': 'Relaciones con otros personajes',
+    's4.card.paradoxes': 'Paradojas y contradicciones',
+    's4.card.biography': 'Biografía',
+    's4.card.voice': 'Voz propia',
+
+    's4.relations.add': '+ Relación',
+    's4.relations.none': 'Añade relaciones con otros personajes.',
+    's4.relations.needMore': 'Crea otro personaje para poder añadir relaciones.',
+    's4.relations.with': 'con',
+
+    's4.modal.title': 'Editar personaje',
+    's4.modal.name': 'Nombre',
+    's4.modal.archetypes': 'Arquetipos (Vogler)',
+    's4.modal.nature': 'Naturaleza (adjetivos)',
+    's4.modal.attitude': 'Actitud (cómo se muestra)',
+    's4.modal.cancel': 'Cancelar',
+    's4.modal.save': 'Guardar',
+
+    // Niveles de conflicto (etiquetas UI)
+    's4.conflict.level.extrapersonal': 'Extrapersonal',
+    's4.conflict.level.personal': 'Personal',
+    's4.conflict.level.internal': 'Interno',
+
+    // Arquetipos (etiquetas UI)
+    'arch.hero': 'Héroe',
+    'arch.mentor': 'Mentor',
+    'arch.threshold': 'Guardián (del umbral)',
+    'arch.herald': 'Heraldo',
+    'arch.trickster': 'Pícaro / Embaucador',
+    'arch.shadow': 'Sombra',
+    'arch.shapeshifter': 'Camaleón / Cambiante',
+
     // Etiquetas de temas (UI)
     'theme.Amor': 'Amor',
     'theme.Odio': 'Odio',
@@ -225,6 +274,53 @@ const dict: Record<Locale, Record<string, string>> = {
     's3.btn.ai': 'AI Proposal',
     's3.btn.ai.tooltip': 'Generate draft (mock) with AI',
 
+    // S4 - Characters
+    's4.title': 'S4 — Characters',
+    's4.add': 'Add character',
+    's4.edit': 'Edit',
+    's4.delete': 'Delete',
+    's4.noname': 'No name',
+
+    's4.card.archetypes': 'Archetypes (Vogler)',
+    's4.card.nature': 'Nature',
+    's4.card.attitude': 'Attitude',
+    's4.card.need.global': 'Dramatic need — Global',
+    's4.card.need.h1': 'Dramatic need — 1st half (until Ordeal)',
+    's4.card.need.h2': 'Dramatic need — 2nd half (after Ordeal)',
+    's4.card.arc': 'Evolution (character arc)',
+    's4.card.conflict': 'Conflict (McKee)',
+    's4.card.conflict.level': 'Conflict — level (McKee)',
+    's4.card.conflict.desc': 'Conflict — description',
+    's4.card.relations': 'Relationships with other characters',
+    's4.card.paradoxes': 'Paradoxes & contradictions',
+    's4.card.biography': 'Biography',
+    's4.card.voice': 'Voice',
+
+    's4.relations.add': '+ Relation',
+    's4.relations.none': 'Add relationships with other characters.',
+    's4.relations.needMore': 'Create another character to add relationships.',
+    's4.relations.with': 'with',
+
+    's4.modal.title': 'Edit character',
+    's4.modal.name': 'Name',
+    's4.modal.archetypes': 'Archetypes (Vogler)',
+    's4.modal.nature': 'Nature (adjectives)',
+    's4.modal.attitude': 'Attitude (how they present)',
+    's4.modal.cancel': 'Cancel',
+    's4.modal.save': 'Save',
+
+    's4.conflict.level.extrapersonal': 'Extrapersonal',
+    's4.conflict.level.personal': 'Personal',
+    's4.conflict.level.internal': 'Internal',
+
+    'arch.hero': 'Hero',
+    'arch.mentor': 'Mentor',
+    'arch.threshold': 'Threshold Guardian',
+    'arch.herald': 'Herald',
+    'arch.trickster': 'Trickster',
+    'arch.shadow': 'Shadow',
+    'arch.shapeshifter': 'Shapeshifter',
+
     // Theme labels (UI)
     'theme.Amor': 'Love',
     'theme.Odio': 'Hate',
@@ -361,6 +457,53 @@ const dict: Record<Locale, Record<string, string>> = {
     's3.examples': 'Exemples',
     's3.btn.ai': 'Proposta IA',
     's3.btn.ai.tooltip': 'Generar esborrany (mock) amb IA',
+
+    // S4 - Personatges
+    's4.title': 'S4 — Personatges',
+    's4.add': 'Afegir personatge',
+    's4.edit': 'Editar',
+    's4.delete': 'Eliminar',
+    's4.noname': 'Sense nom',
+
+    's4.card.archetypes': 'Arquetips (Vogler)',
+    's4.card.nature': 'Naturalesa',
+    's4.card.attitude': 'Actitud',
+    's4.card.need.global': 'Necessitat dramàtica — Global',
+    's4.card.need.h1': 'Necessitat dramàtica — 1a meitat (fins a l’Ordalia)',
+    's4.card.need.h2': 'Necessitat dramàtica — 2a meitat (després de l’Ordalia)',
+    's4.card.arc': 'Evolució (arc de personatge)',
+    's4.card.conflict': 'Conflicte (McKee)',
+    's4.card.conflict.level': 'Conflicte — nivell (McKee)',
+    's4.card.conflict.desc': 'Conflicte — descripció',
+    's4.card.relations': 'Relacions amb altres personatges',
+    's4.card.paradoxes': 'Paradoxes i contradiccions',
+    's4.card.biography': 'Biografia',
+    's4.card.voice': 'Veu',
+
+    's4.relations.add': '+ Relació',
+    's4.relations.none': 'Afegeix relacions amb altres personatges.',
+    's4.relations.needMore': 'Crea un altre personatge per poder afegir relacions.',
+    's4.relations.with': 'amb',
+
+    's4.modal.title': 'Editar personatge',
+    's4.modal.name': 'Nom',
+    's4.modal.archetypes': 'Arquetips (Vogler)',
+    's4.modal.nature': 'Naturalesa (adjectius)',
+    's4.modal.attitude': 'Actitud (com es mostra)',
+    's4.modal.cancel': 'Cancel·lar',
+    's4.modal.save': 'Desar',
+
+    's4.conflict.level.extrapersonal': 'Extrapersonal',
+    's4.conflict.level.personal': 'Personal',
+    's4.conflict.level.internal': 'Intern',
+
+    'arch.hero': 'Heroi',
+    'arch.mentor': 'Mentor',
+    'arch.threshold': 'Guardià (del llindar)',
+    'arch.herald': 'Missatger',
+    'arch.trickster': 'Pícar / Embaucador',
+    'arch.shadow': 'Ombra',
+    'arch.shapeshifter': 'Camaleó / Canviant',
 
     // Etiquetes de temes (UI)
     'theme.Amor': 'Amor',
