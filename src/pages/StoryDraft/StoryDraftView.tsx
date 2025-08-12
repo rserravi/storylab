@@ -1,57 +1,58 @@
-import { Box, Paper, Tabs, Tab, Button, Typography, Grid, TextField, Chip } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { useProjects } from '../../state/projectStore';
+import { Box, Paper, Typography, Button, TextField, Stack } from '@mui/material';
 import { useScreenplay } from '../../state/screenplayStore';
+import { useEffect, useMemo, useState } from 'react';
+import { useProjects } from '../../state/projectStore';
+import FormattedDraft from '../../components/FormattedDraft';
 
-const STEPS = ['S1 Sinopsis','S3 Puntos giro','S2 Tratamiento','S4 Personajes','S5 Subtramas','S6 Escenas clave','S7 Todas las escenas'];
+function toFountain(sceneNumber: number, slug: string, synopsis: string) {
+  const action = synopsis ? synopsis.replace(/\n/g, ' ') : '';
+  return `\n.${slug}\n${action}\n`;
+}
 
-export default function StoryMachineView() {
-  const [tab, setTab] = useState(0);
+export default function StoryDraftView() {
   const { activeProjectId } = useProjects();
-  const { screenplay, load, setTitle, upsertScene } = useScreenplay();
+  const { screenplay, load } = useScreenplay();
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => { if (activeProjectId) load(activeProjectId); }, [activeProjectId]);
 
+  const fountain = useMemo(() => {
+    if (!screenplay) return '';
+    const header = `Title: ${screenplay.title}\n\n`;
+    const body = (screenplay.scenes || [])
+      .sort((a,b)=>a.number-b.number)
+      .map(s => toFountain(s.number, s.slugline, s.synopsis))
+      .join('\n');
+    return header + body;
+  }, [screenplay]);
+
+  if (!screenplay) return null;
+
   return (
     <Box>
-      <Paper sx={{ mb:2, p:2 }}>
-        <Tabs value={tab} onChange={(_,v)=>setTab(v)} variant="scrollable" scrollButtons="auto">
-          {STEPS.map((s,i)=><Tab key={i} label={s}/>)}
-        </Tabs>
-      </Paper>
-
       <Paper sx={{ p:2, mb:2 }}>
-        <Typography variant="h6">Proyecto: {screenplay?.title || 'Cargando...'}</Typography>
-        <TextField
-          label="Título del guion" value={screenplay?.title || ''}
-          onChange={(e)=>setTitle(e.target.value)} sx={{ mt:1, maxWidth: 420 }}
-        />
+        <Typography variant="h6">Story Draft</Typography>
+        <Typography variant="body2" sx={{ opacity:.8 }}>
+          Borrador generado desde tarjetas. Vista izquierda: Fountain (mock). Derecha: **formato Hollywood** (CSS).
+        </Typography>
       </Paper>
 
-      {/* Mock tarjetas de escenas */}
-      <Grid container spacing={2}>
-        {(screenplay?.scenes || []).map(s => (
-          <Grid key={s.id} size={{ xs: 12, md: 6, lg: 4 }}>
-            <Paper sx={{ p:2 }}>
-              <Typography variant="subtitle2">{s.slugline}</Typography>
-              <Chip size="small" label={s.isKey? 'Clave' : 'Normal'} sx={{ mt:1 }} />
-              <TextField
-                label="Sinopsis" multiline minRows={3} sx={{ mt:1 }}
-                value={s.synopsis} onChange={e=>upsertScene({ id: s.id, synopsis: e.target.value })}
-              />
-              <Button sx={{ mt:1 }}>Proponer con IA (mock)</Button>
-            </Paper>
-          </Grid>
-        ))}
-        <Grid size={{ xs: 12 }}>
-          <Button onClick={()=>upsertScene({ isKey:false, slugline:'INT. APARTMENT - NIGHT', synopsis:'Nueva escena' })}>
-            + Añadir escena
-          </Button>
-          <Button sx={{ ml:1 }} onClick={()=>upsertScene({ isKey:true, slugline:'EXT. ROOFTOP - DAY', synopsis:'Escena clave' })}>
-            + Añadir escena clave
-          </Button>
-        </Grid>
-      </Grid>
+      <Stack direction={{ xs:'column', xl:'row' }} spacing={2} alignItems="flex-start">
+        <Paper sx={{ p:2, flex: 1, minWidth: 420 }}>
+          <Typography variant="subtitle2" sx={{ mb:1 }}>Fountain (mock)</Typography>
+          <TextField multiline minRows={24} fullWidth value={fountain} />
+          <Stack direction="row" spacing={1} sx={{ mt:2 }}>
+            <Button disabled={exporting} onClick={()=>setExporting(true)}>Exportar PDF (mock)</Button>
+            <Button disabled={exporting} onClick={()=>setExporting(true)}>Exportar FDX (mock)</Button>
+            <Button disabled={exporting} onClick={()=>setExporting(true)}>Exportar Fountain</Button>
+          </Stack>
+        </Paper>
+
+        <Paper sx={{ p:2, flex: 1 }}>
+          <Typography variant="subtitle2" sx={{ mb:1 }}>Vista Hollywood (CSS)</Typography>
+          <FormattedDraft screenplay={screenplay}/>
+        </Paper>
+      </Stack>
     </Box>
   );
 }

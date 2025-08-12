@@ -1,10 +1,8 @@
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
-  palette: { mode: 'dark' }, // togglearemos más adelante
+export const makeTheme = (mode: 'light'|'dark') => createTheme({
+  palette: { mode },
   components: {
     MuiButton: { defaultProps: { variant: 'contained' } }
   }
 });
-
-export default theme;

@@ -1,21 +1,11 @@
-import { Box, Paper, Tabs, Tab, Button, Typography, TextField, Chip } from '@mui/material';
+import { Box, Paper, Typography, TextField, Button, Chip } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useProjects } from '../../state/projectStore';
 import { useScreenplay } from '../../state/screenplayStore';
 
-import S1SynopsisEditor from './editors/S1SynopsisEditor';
-import S2TreatmentEditor from './editors/S2TreatmentEditor';
-import S3TurningPointsEditor from './editors/S3TurningPointsEditor';
-import S4CharactersEditor from './editors/S4CharactersEditor';
-import S5SubplotsEditor from './editors/S5SubplotsEditor';
-import S6KeyScenesEditor from './editors/S6KeyScenesEditor';
-import S7AllScenesEditor from './editors/S7AllScenesEditor';
-
-const STEPS = ['S1 Sinopsis','S3 Puntos giro','S2 Tratamiento','S4 Personajes','S5 Subtramas','S6 Escenas clave','S7 Todas las escenas'];
-
-export default function StoryMachineView() {
-  const [tab, setTab] = useState(0);
+export default function StoryMachineShell() {
   const { activeProjectId } = useProjects();
   const { screenplay, load, setTitle, upsertScene } = useScreenplay();
 
@@ -23,12 +13,6 @@ export default function StoryMachineView() {
 
   return (
     <Box>
-      <Paper sx={{ mb:2, p:2 }}>
-        <Tabs value={tab} onChange={(_,v)=>setTab(v)} variant="scrollable" scrollButtons="auto">
-          {STEPS.map((s,i)=><Tab key={i} label={s}/>)}
-        </Tabs>
-      </Paper>
-
       <Paper sx={{ p:2, mb:2 }}>
         <Typography variant="h6">Proyecto: {screenplay?.title || 'Cargando...'}</Typography>
         <TextField
@@ -37,16 +21,10 @@ export default function StoryMachineView() {
         />
       </Paper>
 
-      {/* Editores por paso */}
-      {tab===0 && <S1SynopsisEditor/>}
-      {tab===1 && <S3TurningPointsEditor/>}
-      {tab===2 && <S2TreatmentEditor/>}
-      {tab===3 && <S4CharactersEditor/>}
-      {tab===4 && <S5SubplotsEditor/>}
-      {tab===5 && <S6KeyScenesEditor/>}
-      {tab===6 && <S7AllScenesEditor/>}
+      {/* Aquí se renderiza el editor de la sección activa (S1…S7) */}
+      <Outlet />
 
-      {/* Tarjetas de escenas (siempre visibles debajo) */}
+      {/* Tarjetas de escenas */}
       <Paper sx={{ p:2, mt:2, mb:1 }}>
         <Typography variant="subtitle1">Tarjetas de escenas</Typography>
       </Paper>

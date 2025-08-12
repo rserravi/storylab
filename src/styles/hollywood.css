@@ -1,0 +1,78 @@
+/* Fuente monoespaciada tipo Hollywood */
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+
+:root {
+  --paper-width: 8.5in;
+  --paper-height: 11in;
+  --margin-left: 1.5in;
+  --margin-right: 1.0in;
+  --margin-top: 1.0in;
+  --margin-bottom: 1.0in;
+
+  /* Indentaciones estándar (desde borde de página) */
+  --indent-character: 3.7in;
+  --indent-dialogue-left: 2.5in;
+  --indent-dialogue-right: 2.5in;
+  --indent-parenthetical: 3.1in;
+  --transition-right: 1.0in;
+}
+
+.script-sheet {
+  width: var(--paper-width);
+  min-height: var(--paper-height);
+  background: #ffffff;
+  color: #000000;
+  margin: 0 auto 24px auto;
+  box-shadow: 0 4px 28px rgba(0,0,0,.35);
+  font-family: "Courier Prime", "Courier New", Courier, monospace;
+  font-size: 12pt; /* 12pt = 1/6in */
+  line-height: 1.0; /* ~55 líneas por página (aprox.) */
+  position: relative;
+}
+
+.script-content {
+  position: relative;
+  padding: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
+}
+
+.scene-heading {
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin: 0 0 .15in 0;
+}
+
+.action {
+  margin: 0 0 .15in 0;
+}
+
+.character {
+  /* desplazamiento relativo al margen izquierdo de página */
+  margin: 0 0 0.05in calc(var(--indent-character) - var(--margin-left));
+  text-transform: uppercase;
+}
+
+.parenthetical {
+  margin: 0 0 0.05in calc(var(--indent-parenthetical) - var(--margin-left));
+  max-width: 2.5in;
+  font-style: italic;
+}
+
+.dialogue {
+  /* márgenes dentro del área de contenido: 2.5" a cada lado desde borde de página */
+  margin: 0  calc(var(--indent-dialogue-right) - var(--margin-right))
+           0.15in calc(var(--indent-dialogue-left) - var(--margin-left));
+  max-width: none;
+}
+
+.transition {
+  text-align: right;
+  margin: 0 0 .15in 0;
+  padding-right: 0;
+}
+
+.page-number {
+  position: absolute;
+  top: .5in;
+  right: .7in;
+  font-size: 12pt;
+}

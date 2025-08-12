@@ -12,23 +12,37 @@ type AuthState = {
 };
 
 export const useAuth = create<AuthState>((set) => ({
-  user: null, loading: true,
+  user: null,
+  loading: true, // spinner al arrancar hasta hydrate
   hydrate: async () => {
-    const me = await mockAuth.me();
-    set({ user: me, loading: false });
+    try {
+      const me = await mockAuth.me();
+      set({ user: me, loading: false });
+    } catch {
+      set({ user: null, loading: false });
+    }
   },
   login: async (email, password) => {
     set({ loading: true });
-    const u = await mockAuth.login(email, password);
-    set({ user: u, loading: false });
+    try {
+      const u = await mockAuth.login(email, password);
+      set({ user: u, loading: false });
+    } catch (e) {
+      set({ loading: false });
+      throw e;
+    }
   },
   register: async (email, password, name) => {
     set({ loading: true });
-    const u = await mockAuth.register(email, password, name);
-    set({ user: u, loading: false });
+    try {
+      const u = await mockAuth.register(email, password, name);
+      set({ user: u, loading: false });
+    } catch (e) {
+      set({ loading: false });
+      throw e;
+    }
   },
   logout: async () => {
-    await mockAuth.logout();
-    set({ user: null });
+    try { await mockAuth.logout(); } finally { set({ user: null, loading: false }); }
   }
 }));

@@ -13,21 +13,21 @@ export default function Login() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
-    try { await login(email, password); nav('/projects'); }
+    try { await login(email, password); nav('/projects', { replace: true }); }
     catch (e: any) { setErr(e.message); }
   };
 
   return (
-    <Box sx={{ display:'grid', placeItems:'center', minHeight:'100vh', p:2 }}>
-      <Paper sx={{ p:3, width: 360 }}>
-        <Typography variant="h6" sx={{ mb:2 }}>Entrar</Typography>
-        {err && <Alert severity="error" sx={{ mb:2 }}>{err}</Alert>}
+    <Box sx={{ display: 'grid', placeItems: 'center', minHeight: '100vh', p: 2 }}>
+      <Paper sx={{ p: 3, width: 360 }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>Entrar</Typography>
+        {err && <Alert severity="error" sx={{ mb: 2 }}>{err}</Alert>}
         <Box component="form" onSubmit={onSubmit}>
-          <TextField label="Email" fullWidth margin="dense" value={email} onChange={e=>setEmail(e.target.value)} />
-          <TextField label="Contraseña" type="password" fullWidth margin="dense" value={password} onChange={e=>setPassword(e.target.value)} />
-          <Button type="submit" fullWidth sx={{ mt:2 }}>Acceder</Button>
+          <TextField label="Email" fullWidth margin="dense" value={email} onChange={e => setEmail(e.target.value)} />
+          <TextField label="Contraseña" type="password" fullWidth margin="dense" value={password} onChange={e => setPassword(e.target.value)} />
+          <Button type="submit" fullWidth sx={{ mt: 2 }}>Acceder</Button>
         </Box>
-        <Link component={RLink} to="/register" sx={{ mt:2, display:'inline-block' }}>Crear cuenta</Link>
+        <Link component={RLink} to="/register" sx={{ mt: 2, display: 'inline-block' }}>Crear cuenta</Link>
       </Paper>
     </Box>
   );

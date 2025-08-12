@@ -7,6 +7,7 @@ type SPState = {
   load: (projectId: string) => Promise<void>;
   setTitle: (title: string) => void;
   upsertScene: (scene: Partial<Scene>) => void;
+  patch: (partial: Partial<Screenplay>) => void; // <- NUEVO
 };
 
 export const useScreenplay = create<SPState>((set, get) => ({
@@ -23,9 +24,21 @@ export const useScreenplay = create<SPState>((set, get) => ({
     const sp = get().screenplay!;
     const scenes = [...(sp.scenes||[])];
     const idx = scenes.findIndex(s => s.id === scene.id);
-    const merged = { id: scene.id || crypto.randomUUID(), number: scene.number ?? scenes.length + 1, slugline: scene.slugline || 'INT. TBD - DAY', characters: scene.characters || [], synopsis: scene.synopsis || '', isKey: !!scene.isKey };
+    const merged = {
+      id: scene.id || crypto.randomUUID(),
+      number: scene.number ?? scenes.length + 1,
+      slugline: scene.slugline || 'INT. TBD - DAY',
+      characters: scene.characters || [],
+      synopsis: scene.synopsis || '',
+      isKey: !!scene.isKey
+    };
     if (idx >= 0) scenes[idx] = { ...scenes[idx], ...merged }; else scenes.push(merged as any);
     const next = { ...sp, scenes };
+    mockScreenplays.update(next); set({ screenplay: next });
+  },
+  patch: (partial) => {
+    const sp = get().screenplay!;
+    const next = { ...sp, ...partial };
     mockScreenplays.update(next); set({ screenplay: next });
   }
 }));
