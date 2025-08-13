@@ -23,6 +23,7 @@ const dict: Record<Locale, Record<string, string>> = {
     'nav.storyDraft': 'Story Draft',
     'nav.activeProject': 'Proyecto activo',
     'nav.steps': 'Pasos',
+    'nav.prewriting': 'Pre-Escritura',
 
     // Story Machine — pasos
     'nav.machine.s1': 'Ideación',
@@ -355,6 +356,7 @@ const dict: Record<Locale, Record<string, string>> = {
     'nav.storyDraft': 'Story Draft',
     'nav.activeProject': 'Active project',
     'nav.steps': 'Steps',
+    'nav.prewriting': 'Pre-Writing',
 
     // Story Machine — steps
     'nav.machine.s1': 'Ideation',
@@ -679,6 +681,7 @@ const dict: Record<Locale, Record<string, string>> = {
     'nav.storyDraft': 'Story Draft',
     'nav.activeProject': 'Projecte actiu',
     'nav.steps': 'Passes',
+    'nav.prewriting': 'Pre-escriptura',
 
     // Story Machine — passes
     'nav.machine.s1': 'Ideació',
