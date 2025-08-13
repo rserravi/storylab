@@ -104,6 +104,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   if (line) lines.push(line);
   return lines;
 }
+
 /* ───────────────── componente principal ───────────────── */
 
 export default function S4CharactersEditor() {
@@ -148,6 +149,7 @@ export default function S4CharactersEditor() {
       if (matches(c.conflictInternal)) return true;
       if (matches(c.conflictPersonal)) return true;
       if (matches(c.conflictExtrapersonal)) return true;
+
       if (matches(c.arc)) return true;
       if (matches(c.needGlobal) || matches(c.needH1) || matches(c.needH2)) return true;
       if (matches(c.biography) || matches(c.voice) || matches(c.paradoxes)) return true;
@@ -295,10 +297,15 @@ export default function S4CharactersEditor() {
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       {/* Header: nombre + acciones */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: .5 }}>
-        <PersonIcon sx={{ opacity: .7 }} />
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mr: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Avatar src={c.image} sx={{ width: 24, height: 24 }}>
+          <PersonIcon fontSize="small" />
+        </Avatar>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {c.name?.trim() || t('s4.noname')}
         </Typography>
+        {c.archetypes?.[0] && (
+          <Chip size="small" label={archLabel(c.archetypes[0], t)} variant="outlined" />
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <Tooltip title={t('s4.edit')}>
           <IconButton onClick={onEdit} size="small"><EditIcon fontSize="small" /></IconButton>
@@ -359,9 +366,30 @@ export default function S4CharactersEditor() {
         </Typography>
       </Box>
 
+      {/* Conflictos (resumen) */}
+      <Box sx={{ mb: .5 }}>
+        <Typography variant="caption" sx={{ display:'block', mb:.25, fontWeight:600, opacity:.8 }}>
+          {t('s4.card.conflict')}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
+          }}
+          title={[
+            `${t('s4.card.conflict.internal')}: ${c.conflictInternal || '—'}`,
+            `${t('s4.card.conflict.personal')}: ${c.conflictPersonal || '—'}`,
+            `${t('s4.card.conflict.extrapersonal')}: ${c.conflictExtrapersonal || '—'}`
+          ].join('\n')}
+        >
+          • {t('s4.card.conflict.internal')}: {c.conflictInternal || '—'} · {t('s4.card.conflict.personal')}: {c.conflictPersonal || '—'} · {t('s4.card.conflict.extrapersonal')}: {c.conflictExtrapersonal || '—'}
+        </Typography>
+      </Box>
+
       <Divider sx={{ my: 1 }} />
 
-      {/* Footer: Conflicto + Relaciones (popover) + Voz + Bio (popover) */}
+      {/* Footer: Relaciones (popover) + Voz + Bio (popover) */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
         <Chip
           size="small"
@@ -373,6 +401,7 @@ export default function S4CharactersEditor() {
           ].filter(Boolean).join(' · ') || '—'}`}
           sx={{ mr: .5 }}
         />
+
 
         {/* Relaciones (conteo + popover) */}
         <Tooltip title={t('s4.card.relations')}>
@@ -399,14 +428,14 @@ export default function S4CharactersEditor() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              flexGrow: 1
+              flexGrow: 0
             }}
             title={`${t('s4.card.voice')}: ${voiceShort}`}
           >
             🔊 {voiceShort}
           </Typography>
         ) : (
-          <Typography variant="body2" sx={{ ml: .5, opacity:.7, flexGrow: 1 }}>—</Typography>
+          <Typography variant="body2" sx={{ ml: .5, opacity:.7, flexGrow: 0 }}>—</Typography>
         )}
 
         {/* Biografía (popover) */}
@@ -458,7 +487,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
   const t = useT();
   const traitSuggestions = useTraitSuggestions();
   const [draft, setDraft] = useState<Character>(value);
-  useMemo(() => setDraft(value), [value?.id]); // sync al cambiar personaje
+  useMemo(() => setDraft({ ...createEmpty(), ...value }), [value?.id]); // sync al cambiar personaje
   const set = (patch: Partial<Character>) => setDraft(prev => ({ ...prev, ...patch }));
 
   const otherCharacters = allCharacters.filter(c => c.id !== draft.id);

@@ -127,10 +127,14 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Necesidad dramática — 2ª mitad (tras Ordalía)',
     's4.card.arc': 'Evolución (arco de personaje)',
     's4.card.conflict': 'Conflicto (McKee)',
+
+    's4.card.conflict.level': 'Conflicto — nivel (McKee)',
+    's4.card.conflict.desc': 'Conflicto — descripción',
     's4.card.conflict.internal': 'Conflicto interno',
     's4.card.conflict.personal': 'Conflicto personal',
     's4.card.conflict.extrapersonal': 'Conflicto extrapersonal',
     's4.card.relations': 'Relaciones con otros personajes',
+
     's4.card.paradoxes': 'Paradojas y contradicciones',
     's4.card.biography': 'Biografía',
     's4.card.voice': 'Voz propia',
@@ -444,10 +448,14 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Dramatic need — 2nd half (after Ordeal)',
     's4.card.arc': 'Evolution (character arc)',
     's4.card.conflict': 'Conflict (McKee)',
+
+    's4.card.conflict.level': 'Conflict — level (McKee)',
+    's4.card.conflict.desc': 'Conflict — description',
     's4.card.conflict.internal': 'Internal conflict',
     's4.card.conflict.personal': 'Personal conflict',
     's4.card.conflict.extrapersonal': 'Extrapersonal conflict',
     's4.card.relations': 'Relationships with other characters',
+
     's4.card.paradoxes': 'Paradoxes & contradictions',
     's4.card.biography': 'Biography',
     's4.card.voice': 'Voice',
@@ -754,10 +762,14 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Necessitat dramàtica — 2a meitat (després de l’Ordalia)',
     's4.card.arc': 'Evolució (arc de personatge)',
     's4.card.conflict': 'Conflicte (McKee)',
+
+    's4.card.conflict.level': 'Conflicte — nivell (McKee)',
+    's4.card.conflict.desc': 'Conflicte — descripció',
     's4.card.conflict.internal': 'Conflicte intern',
     's4.card.conflict.personal': 'Conflicte personal',
     's4.card.conflict.extrapersonal': 'Conflicte extrapersonal',
     's4.card.relations': 'Relacions amb altres personatges',
+
     's4.card.paradoxes': 'Paradoxes i contradiccions',
     's4.card.biography': 'Biografia',
     's4.card.voice': 'Veu',
