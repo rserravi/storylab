@@ -24,7 +24,6 @@ import { AI_STYLES, type AIStyle } from '../../../data/aiStyles';
 import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
 import {
-  ARCH_CODE,
   createEmpty,
   dedupeStrings,
   filterOptions,
@@ -86,24 +85,6 @@ function hashCode(str: string) {
   let h = 0, i = 0, len = str.length;
   while (i < len) { h = (h << 5) - h + str.charCodeAt(i++) | 0; }
   return h;
-}
-
-function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
-  const words = text.split(/\s+/);
-  const lines: string[] = [];
-  let line = '';
-  for (const w of words) {
-    const test = line ? line + ' ' + w : w;
-    if (ctx.measureText(test).width <= maxWidth) {
-      line = test;
-    } else {
-      if (line) lines.push(line);
-      line = w;
-    }
-  }
-  if (line) lines.push(line);
-  return lines;
-
 }
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
@@ -510,6 +491,31 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
 
   const otherCharacters = allCharacters.filter(c => c.id !== draft.id);
   const canRelate = otherCharacters.length > 0;
+
+  // Estado para generación de imagen IA (mock)
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiStyle, setAiStyle] = useState<AIStyle>('cinematic');
+  const [aiBusy, setAiBusy] = useState(false);
+
+  const onFile = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const img = await fileToImage(files[0]);
+    set({ image: img });
+  };
+
+  const handleAIGenerate = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiBusy(true);
+    try {
+      const img = await generateMockImageFromPrompt(aiPrompt, t(`s6.aiStyle.${aiStyle}`));
+      set({ image: img });
+      setAiOpen(false);
+      setAiPrompt('');
+    } finally {
+      setAiBusy(false);
+    }
+  };
 
   const handleAiComplete = () => {
     // TODO: implement AI completion for character fields
