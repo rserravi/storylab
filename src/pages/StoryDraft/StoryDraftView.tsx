@@ -306,7 +306,6 @@ function SceneEditorRow({
     autofocus: false,
     onCreate: ({ editor }) => {
       annotateAllParagraphTypes(editor);
-      setActiveType(getCurrentParagraphType(editor));
     },
     onUpdate: ({ editor }) => {
       annotateAllParagraphTypes(editor);
@@ -316,6 +315,12 @@ function SceneEditorRow({
       setActiveType(getCurrentParagraphType(editor));
     }
   }, [initialHtml]);
+
+  useEffect(() => {
+    if (editor) {
+      setActiveType(getCurrentParagraphType(editor));
+    }
+  }, [editor]);
 
   const scheduleSave = useRef<null | (() => void)>(null);
   useEffect(() => {
