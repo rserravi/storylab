@@ -7,6 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LeftDrawer from '../components/LeftDrawer';
+import ProjectStatusFooter from '../components/ProjectStatusFooter';
 import { useProjects } from '../state/projectStore';
 import { useAuth } from '../state/authStore';
 import { useUi } from '../state/uiStore';
@@ -75,8 +76,11 @@ export default function AppLayout() {
 
       <LeftDrawer width={260} open={leftOpen} onClose={() => setLeftOpen(false)} />
 
-      <Box component="main" sx={{ flexGrow: 1, p: 2, mt: 8 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 2, mt: 8, pb: 8 }}>
         <Outlet />
+      </Box>
+      <Box component="footer" sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}>
+        <ProjectStatusFooter />
       </Box>
     </Box>
   );

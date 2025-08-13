@@ -36,6 +36,16 @@ const dict: Record<Locale, Record<string, string>> = {
     // AppBar
     'project.none': 'Sin proyecto',
 
+    // Footer
+    'footer.prewriting': 'Preescritura',
+    'footer.prewriting.pending': 'Pendiente',
+    'footer.prewriting.completed': 'Completada',
+    'footer.characters': 'Personajes',
+    'footer.locations': 'Localizaciones',
+    'footer.scenes': 'Escenas',
+    'footer.scenesWithScript': 'Escenas con guion',
+    'footer.pages': 'Páginas',
+
     // ===== S1 — Ideación (Egri) =====
     's1.title': 'Ideación: Idea + Premisa + Tema + Género',
     's1.subtitle': 'Define hasta 5 ideas. Cada una lleva una Premisa (proposición causal de Egri), un Tema principal y un Género.',
@@ -358,6 +368,16 @@ const dict: Record<Locale, Record<string, string>> = {
     // AppBar
     'project.none': 'No project',
 
+    // Footer
+    'footer.prewriting': 'Prewriting',
+    'footer.prewriting.pending': 'Pending',
+    'footer.prewriting.completed': 'Completed',
+    'footer.characters': 'Characters',
+    'footer.locations': 'Locations',
+    'footer.scenes': 'Scenes',
+    'footer.scenesWithScript': 'Scripted scenes',
+    'footer.pages': 'Pages',
+
     // ===== S1 =====
     's1.title': 'Ideation: Idea + Premise + Theme + Genre',
     's1.subtitle': "Define up to 5 ideas. Each one has a Premise (Egri’s causal proposition), a main Theme and a Genre.",
@@ -671,6 +691,16 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // AppBar
     'project.none': 'Sense projecte',
+
+    // Peu de pàgina
+    'footer.prewriting': 'Preescriptura',
+    'footer.prewriting.pending': 'Pendent',
+    'footer.prewriting.completed': 'Completada',
+    'footer.characters': 'Personatges',
+    'footer.locations': 'Localitzacions',
+    'footer.scenes': 'Escenes',
+    'footer.scenesWithScript': 'Escenes amb guió',
+    'footer.pages': 'Pàgines',
 
     // ===== S1 — Ideació (Egri) =====
     's1.title': 'Ideació: Idea + Premissa + Tema + Gènere',
