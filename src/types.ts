@@ -3,6 +3,7 @@ export type Project = { id: string; name: string; createdAt: string };
 export type TurningPointType = 'inciting'|'lockin'|'midpoint'|'crisis'|'climax';
 export type ConflictLevel = 'Extrapersonal' | 'Personal' | 'Interno';
 
+
 export type Scene = {
   id: string;
   locationName: string;        // guardamos el texto (índice por nombre)
