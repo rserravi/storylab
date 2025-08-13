@@ -11,12 +11,6 @@ export const ARCH_CODE: Record<string, 'hero' | 'mentor' | 'threshold' | 'herald
   'Camaleón / Cambiante': 'shapeshifter',
 };
 
-export const CONFLICT_CODE: Record<string, 'extrapersonal' | 'personal' | 'internal'> = {
-  'Extrapersonal': 'extrapersonal',
-  'Personal': 'personal',
-  'Interno': 'internal',
-};
-
 export const filterOptions = createFilterOptions<string>({
   ignoreAccents: true,
   ignoreCase: true,
@@ -35,8 +29,10 @@ export function createEmpty(): Character {
     needH1: '',
     needH2: '',
     arc: '',
-    conflictLevel: 'Interno',
-    conflictDesc: '',
+    conflictInternal: '',
+    conflictPersonal: '',
+    conflictExtrapersonal: '',
+    image: undefined,
     relations: [],
     paradoxes: '',
     biography: '',
@@ -66,7 +62,10 @@ export function normalizeDraft(d: Character): Character {
     needH1: (d.needH1 || '').trim(),
     needH2: (d.needH2 || '').trim(),
     arc: (d.arc || '').trim(),
-    conflictDesc: (d.conflictDesc || '').trim(),
+    conflictInternal: (d.conflictInternal || '').trim(),
+    conflictPersonal: (d.conflictPersonal || '').trim(),
+    conflictExtrapersonal: (d.conflictExtrapersonal || '').trim(),
+    image: d.image ? { ...d.image, name: (d.image.name || '').trim() } : undefined,
     relations: (d.relations || []).map((r) => ({ ...r, description: (r.description || '').trim() })),
     paradoxes: (d.paradoxes || '').trim(),
     biography: (d.biography || '').trim(),
