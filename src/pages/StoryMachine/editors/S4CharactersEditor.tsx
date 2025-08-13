@@ -22,6 +22,7 @@ import { ARCHETYPES } from '../../../data/archetypes';
 import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
 import {
+  ARCH_CODE,
   createEmpty,
   dedupeStrings,
   filterOptions,
@@ -77,12 +78,10 @@ export default function S4CharactersEditor() {
       if (c.archetypes?.some(a => matches(a))) return true;
       if (c.nature?.some(n => matches(n))) return true;
       if (c.attitude?.some(a => matches(a))) return true;
-      if (
-        matches(c.conflictInternal) ||
-        matches(c.conflictPersonal) ||
-        matches(c.conflictExtrapersonal)
-      ) return true;
-      if (matches(c.image?.name)) return true;
+      if (matches(c.conflictLevel)) return true;
+      if (matches(c.conflictDesc)) return true;
+      if (matches(c.conflictInternal) || matches(c.conflictPersonal) || matches(c.conflictExtrapersonal)) return true;
+
       if (matches(c.arc)) return true;
       if (matches(c.needGlobal) || matches(c.needH1) || matches(c.needH2)) return true;
       if (matches(c.biography) || matches(c.voice) || matches(c.paradoxes)) return true;
@@ -299,28 +298,31 @@ export default function S4CharactersEditor() {
         </Typography>
       </Box>
 
-      <Divider sx={{ my: 1 }} />
-
-      {/* Footer: Conflicto + Relaciones (popover) + Voz + Bio (popover) */}
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
+      {/* Conflictos (resumen) */}
+      <Box sx={{ mb: .5 }}>
+        <Typography variant="caption" sx={{ display:'block', mb:.25, fontWeight:600, opacity:.8 }}>
+          {t('s4.card.conflict')}
+        </Typography>
         <Typography
           variant="body2"
           sx={{
-            mr: 1,
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            flexGrow: 1
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
           }}
           title={[
-            `${t('s4.conflict.level.internal')}: ${c.conflictInternal || '—'}`,
-            `${t('s4.conflict.level.personal')}: ${c.conflictPersonal || '—'}`,
-            `${t('s4.conflict.level.extrapersonal')}: ${c.conflictExtrapersonal || '—'}`,
+            `${t('s4.card.conflict.internal')}: ${c.conflictInternal || '—'}`,
+            `${t('s4.card.conflict.personal')}: ${c.conflictPersonal || '—'}`,
+            `${t('s4.card.conflict.extrapersonal')}: ${c.conflictExtrapersonal || '—'}`
           ].join('\n')}
         >
-          {t('s4.conflict.level.internal')}: {c.conflictInternal || '—'} · {t('s4.conflict.level.personal')}: {c.conflictPersonal || '—'} · {t('s4.conflict.level.extrapersonal')}: {c.conflictExtrapersonal || '—'}
+          • {t('s4.card.conflict.internal')}: {c.conflictInternal || '—'} · {t('s4.card.conflict.personal')}: {c.conflictPersonal || '—'} · {t('s4.card.conflict.extrapersonal')}: {c.conflictExtrapersonal || '—'}
         </Typography>
+      </Box>
+
+      <Divider sx={{ my: 1 }} />
+
+      {/* Footer: Relaciones (popover) + Voz + Bio (popover) */}
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
 
         {/* Relaciones (conteo + popover) */}
         <Tooltip title={t('s4.card.relations')}>
