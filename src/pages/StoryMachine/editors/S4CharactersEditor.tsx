@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import {
   Box, Paper, Stack, Typography, Button, IconButton, Chip, Divider,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Tooltip,
-  Grid, Popover, InputAdornment
+  Grid, Popover, InputAdornment, Avatar
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -237,10 +237,15 @@ export default function S4CharactersEditor() {
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       {/* Header: nombre + acciones */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: .5 }}>
-        <PersonIcon sx={{ opacity: .7 }} />
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mr: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Avatar src={c.image} sx={{ width: 24, height: 24 }}>
+          <PersonIcon fontSize="small" />
+        </Avatar>
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {c.name?.trim() || t('s4.noname')}
         </Typography>
+        {c.archetypes?.[0] && (
+          <Chip size="small" label={archLabel(c.archetypes[0], t)} variant="outlined" />
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <Tooltip title={t('s4.edit')}>
           <IconButton onClick={onEdit} size="small"><EditIcon fontSize="small" /></IconButton>
