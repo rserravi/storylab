@@ -46,15 +46,26 @@ export const mockProjects = {
 };
 
 export const mockScreenplays = {
-  getOrCreateByProject: async (projectId: string) => {
+  getOrCreateByProject: async (
+    projectId: string,
+    defaults: { title?: string; author?: string } = {}
+  ) => {
     const all = read<any[]>(LS.screenplays, []);
     let s = all.find(x => x.projectId === projectId);
     if (!s) {
-      s = { id: uuid(), projectId, title: 'Nuevo Guion', author: '', scenes: [] };
+      s = {
+        id: uuid(),
+        projectId,
+        title: defaults.title ?? 'Nuevo Guion',
+        author: defaults.author ?? '',
+        scenes: [],
+      };
       all.push(s); write(LS.screenplays, all);
-    } else if (!('author' in s)) {
-      s.author = '';
-      write(LS.screenplays, all);
+    } else {
+      let changed = false;
+      if (!s.title) { s.title = defaults.title ?? 'Nuevo Guion'; changed = true; }
+      if (!s.author) { s.author = defaults.author ?? ''; changed = true; }
+      if (changed) write(LS.screenplays, all);
     }
     return s;
   },
