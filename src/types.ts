@@ -1,6 +1,7 @@
 export type User = { id: string; email: string; name: string };
 export type Project = { id: string; name: string; createdAt: string };
 export type TurningPointType = 'inciting'|'lockin'|'midpoint'|'crisis'|'climax';
+
 export type Scene = {
   id: string;
   /** Número de escena dentro del guion */
@@ -78,11 +79,11 @@ export type Character = {
   needH1: string;              // Necesidades dramáticas 1ª mitad (hasta la Ordalía)
   needH2: string;              // Necesidades dramáticas 2ª mitad (tras la Ordalía)
   arc: string;                // Arco (evolución)
-
   conflictInternal: string;   // Conflicto interno
   conflictPersonal: string;   // Conflicto personal
   conflictExtrapersonal: string; // Conflicto extrapersonal
-  image?: { id: string; src: string; name?: string };
+  image?: { id: string; src: string; name?: string }; // Imagen del personaje
+
   relations: CharacterRelation[];  // Relaciones con otros personajes
   paradoxes: string;      // Paradojas/Contradicciones
   biography: string;     // Biografía

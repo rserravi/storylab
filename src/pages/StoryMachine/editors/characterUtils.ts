@@ -33,6 +33,7 @@ export function createEmpty(): Character {
     conflictInternal: '',
     conflictPersonal: '',
     conflictExtrapersonal: '',
+    image: undefined,
     conflictLevel: 'Interno',
     conflictDesc: '',
     relations: [],

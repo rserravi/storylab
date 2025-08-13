@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import {
   Box, Paper, Stack, Typography, Button, IconButton, Chip, Divider,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Tooltip,
-  Grid, Popover, InputAdornment, Avatar
+  Grid, Popover, InputAdornment, Avatar, CircularProgress
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,11 +14,13 @@ import ArticleIcon from '@mui/icons-material/Article';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import UploadIcon from '@mui/icons-material/Upload';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
 import type { Character } from '../../../types';
 import { ARCHETYPES } from '../../../data/archetypes';
+import { AI_STYLES, type AIStyle } from '../../../data/aiStyles';
 import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
 import {
@@ -37,6 +39,72 @@ function archLabel(value: string, t:(k:string)=>string) {
   const label = t(key);
   return label === key ? value : label;
 }
+
+/* ───────────────────── helpers ───────────────────── */
+
+function fileToImage(file: File): Promise<{ id: string; src: string; name?: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => resolve({
+      id: crypto.randomUUID(),
+      src: String(reader.result),
+      name: file.name,
+    });
+    reader.readAsDataURL(file);
+  });
+}
+
+async function generateMockImageFromPrompt(prompt: string, style?: string): Promise<{ id: string; src: string; name?: string }> {
+  const w = 1024, h = 576;
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d')!;
+  const hue = Math.abs(hashCode(prompt + '|' + (style || ''))) % 360;
+  const g = ctx.createLinearGradient(0, 0, w, h);
+  g.addColorStop(0, `hsl(${hue},70%,55%)`);
+  g.addColorStop(1, `hsl(${(hue + 60) % 360},70%,35%)`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 48px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  ctx.fillText(style || 'AI Concept', 32, 72);
+  ctx.font = '24px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  const lines = wrapText(ctx, prompt, w - 64);
+  let y = 120;
+  for (const line of lines.slice(0, 7)) {
+    ctx.fillText(line, 32, y);
+    y += 34;
+  }
+  const data = canvas.toDataURL('image/png');
+  return { id: crypto.randomUUID(), src: data, name: `ai-${Date.now()}.png` };
+}
+
+function hashCode(str: string) {
+  let h = 0, i = 0, len = str.length;
+  while (i < len) { h = (h << 5) - h + str.charCodeAt(i++) | 0; }
+  return h;
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
+  const words = text.split(/\s+/);
+  const lines: string[] = [];
+  let line = '';
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width <= maxWidth) {
+      line = test;
+    } else {
+      if (line) lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
 /* ───────────────── componente principal ───────────────── */
 
 export default function S4CharactersEditor() {
@@ -78,9 +146,9 @@ export default function S4CharactersEditor() {
       if (c.archetypes?.some(a => matches(a))) return true;
       if (c.nature?.some(n => matches(n))) return true;
       if (c.attitude?.some(a => matches(a))) return true;
-      if (matches(c.conflictLevel)) return true;
-      if (matches(c.conflictDesc)) return true;
-      if (matches(c.conflictInternal) || matches(c.conflictPersonal) || matches(c.conflictExtrapersonal)) return true;
+      if (matches(c.conflictInternal)) return true;
+      if (matches(c.conflictPersonal)) return true;
+      if (matches(c.conflictExtrapersonal)) return true;
 
       if (matches(c.arc)) return true;
       if (matches(c.needGlobal) || matches(c.needH1) || matches(c.needH2)) return true;
@@ -323,6 +391,17 @@ export default function S4CharactersEditor() {
 
       {/* Footer: Relaciones (popover) + Voz + Bio (popover) */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
+        <Chip
+          size="small"
+          variant="outlined"
+          label={`${t('s4.card.conflict')}: ${[
+            c.conflictInternal && t('s4.conflict.level.internal'),
+            c.conflictPersonal && t('s4.conflict.level.personal'),
+            c.conflictExtrapersonal && t('s4.conflict.level.extrapersonal'),
+          ].filter(Boolean).join(' · ') || '—'}`}
+          sx={{ mr: .5 }}
+        />
+
 
         {/* Relaciones (conteo + popover) */}
         <Tooltip title={t('s4.card.relations')}>
@@ -419,6 +498,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
   };
 
   return (
+    <>
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
       <Stack direction="row" alignItems="center" spacing={1} sx={{ px:3, py:2 }}>
         <DialogTitle sx={{ flexGrow:1, p:0 }}>{t('s4.modal.title')}</DialogTitle>
@@ -428,7 +508,19 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
       </Stack>
       <DialogContent dividers sx={{ maxHeight:'80vh' }}>
         <Stack spacing={2} sx={{ mt: .5 }}>
-          <TextField label={t('s4.modal.name')} value={draft.name} onChange={(e)=>set({ name: e.target.value })} fullWidth />
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Avatar src={draft.image?.src} sx={{ width: 80, height: 80 }} />
+            <TextField label={t('s4.modal.name')} value={draft.name} onChange={(e)=>set({ name: e.target.value })} fullWidth />
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            <Button component="label" startIcon={<UploadIcon/>} variant="outlined">
+              {t('s4.image.upload')}
+              <input type="file" accept="image/*" hidden onChange={(e)=>onFile(e.target.files)} />
+            </Button>
+            <Button startIcon={<AutoAwesomeIcon/>} variant="outlined" onClick={()=>setAiOpen(true)}>
+              {t('s4.image.generate')}
+            </Button>
+          </Stack>
 
           <Autocomplete
             multiple
@@ -480,30 +572,9 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
 
           <TextField label={t('s4.card.arc')} value={draft.arc} onChange={(e)=>set({ arc: e.target.value })} multiline minRows={3} fullWidth />
 
-          <TextField
-            label={t('s4.conflict.level.internal')}
-            value={draft.conflictInternal}
-            onChange={(e)=>set({ conflictInternal: e.target.value })}
-            multiline
-            minRows={2}
-            fullWidth
-          />
-          <TextField
-            label={t('s4.conflict.level.personal')}
-            value={draft.conflictPersonal}
-            onChange={(e)=>set({ conflictPersonal: e.target.value })}
-            multiline
-            minRows={2}
-            fullWidth
-          />
-          <TextField
-            label={t('s4.conflict.level.extrapersonal')}
-            value={draft.conflictExtrapersonal}
-            onChange={(e)=>set({ conflictExtrapersonal: e.target.value })}
-            multiline
-            minRows={2}
-            fullWidth
-          />
+          <TextField label={t('s4.card.conflict.internal')} value={draft.conflictInternal} onChange={(e)=>set({ conflictInternal: e.target.value })} multiline minRows={2} fullWidth />
+          <TextField label={t('s4.card.conflict.personal')} value={draft.conflictPersonal} onChange={(e)=>set({ conflictPersonal: e.target.value })} multiline minRows={2} fullWidth />
+          <TextField label={t('s4.card.conflict.extrapersonal')} value={draft.conflictExtrapersonal} onChange={(e)=>set({ conflictExtrapersonal: e.target.value })} multiline minRows={2} fullWidth />
 
           <Box>
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb:1 }}>
@@ -555,5 +626,45 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
         <Button onClick={()=>onSave(normalizeDraft(draft))} variant="contained">{t('s4.modal.save')}</Button>
       </DialogActions>
     </Dialog>
+    <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpen(false)} maxWidth="sm" fullWidth>
+      <DialogTitle>{t('s6.ai.title')}</DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2} sx={{ mt: .5 }}>
+          <TextField
+            label={t('s6.ai.prompt')}
+            value={aiPrompt}
+            onChange={(e)=>setAiPrompt(e.target.value)}
+            placeholder={t('s6.ai.promptPh')}
+            multiline minRows={3} fullWidth
+          />
+          <TextField
+            label={t('s6.ai.style')}
+            select
+            value={aiStyle}
+            onChange={(e)=>setAiStyle(e.target.value as AIStyle)}
+            SelectProps={{ native: true }}
+          >
+            {AI_STYLES.map(s => (
+              <option key={s} value={s}>{t(`s6.aiStyle.${s}`)}</option>
+            ))}
+          </TextField>
+          <Typography variant="caption" sx={{ opacity:.7 }}>
+            {t('s6.ai.note')}
+          </Typography>
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={()=>!aiBusy && setAiOpen(false)} disabled={aiBusy}>{t('common.cancel')}</Button>
+        <Button
+          variant="contained"
+          onClick={handleAIGenerate}
+          disabled={aiBusy || !aiPrompt.trim()}
+          startIcon={aiBusy ? <CircularProgress size={18} /> : <AutoAwesomeIcon/>}
+        >
+          {aiBusy ? t('s6.ai.generating') : t('s6.ai.generate')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+    </>
   );
 }

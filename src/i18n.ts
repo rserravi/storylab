@@ -127,6 +127,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Necesidad dramática — 2ª mitad (tras Ordalía)',
     's4.card.arc': 'Evolución (arco de personaje)',
     's4.card.conflict': 'Conflicto (McKee)',
+
     's4.card.conflict.level': 'Conflicto — nivel (McKee)',
     's4.card.conflict.desc': 'Conflicto — descripción',
     's4.card.conflict.internal': 'Conflicto interno',
@@ -153,6 +154,8 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.cancel': 'Cancelar',
     's4.modal.save': 'Guardar',
     's4.modal.aiComplete': 'Completar con IA',
+    's4.image.upload': 'Subir imagen',
+    's4.image.generate': 'Generar IA',
 
     's4.search.label': 'Buscar',
     's4.search.placeholder': 'Nombre, arquetipos, rasgos, conflicto…',
@@ -445,6 +448,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Dramatic need — 2nd half (after Ordeal)',
     's4.card.arc': 'Evolution (character arc)',
     's4.card.conflict': 'Conflict (McKee)',
+
     's4.card.conflict.level': 'Conflict — level (McKee)',
     's4.card.conflict.desc': 'Conflict — description',
     's4.card.conflict.internal': 'Internal conflict',
@@ -471,6 +475,8 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.cancel': 'Cancel',
     's4.modal.save': 'Save',
     's4.modal.aiComplete': 'Complete with AI',
+    's4.image.upload': 'Upload image',
+    's4.image.generate': 'Generate AI',
 
     's4.conflict.level.extrapersonal': 'Extrapersonal',
     's4.conflict.level.personal': 'Personal',
@@ -756,6 +762,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Necessitat dramàtica — 2a meitat (després de l’Ordalia)',
     's4.card.arc': 'Evolució (arc de personatge)',
     's4.card.conflict': 'Conflicte (McKee)',
+
     's4.card.conflict.level': 'Conflicte — nivell (McKee)',
     's4.card.conflict.desc': 'Conflicte — descripció',
     's4.card.conflict.internal': 'Conflicte intern',
@@ -782,6 +789,8 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.cancel': 'Cancel·lar',
     's4.modal.save': 'Desar',
     's4.modal.aiComplete': 'Completar amb IA',
+    's4.image.upload': 'Pujar imatge',
+    's4.image.generate': 'Generar IA',
 
     's4.conflict.level.extrapersonal': 'Extrapersonal',
     's4.conflict.level.personal': 'Personal',
