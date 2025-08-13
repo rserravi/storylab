@@ -16,7 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
-import type { Character, CharacterRelation, ConflictLevel } from '../../../types';
+import type { Character, ConflictLevel } from '../../../types';
 import { ARCHETYPES } from '../../../data/archetypes';
 import { TRAIT_SUGGESTIONS } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
@@ -202,7 +202,6 @@ export default function S4CharactersEditor() {
             <Grid key={c.id} size={{ xs: 12, md: 6, lg: 6 }}>
               <CompactCharacterCard
                 c={c}
-                all={characters}
                 t={t}
                 onEdit={() => setEditing(c)}
                 onDelete={() => removeCharacter(c.id)}
@@ -274,16 +273,16 @@ export default function S4CharactersEditor() {
 
 /* ───────────────── Card compacta (se mantiene) ───────────────── */
 
-function CompactCharacterCard({
-  c, all, t,
-  onEdit, onDelete,
-  onOpenBio, onOpenRelations
-}: {
-  c: Character; all: Character[]; t: (k:string)=>string;
-  onEdit: () => void; onDelete: () => void;
-  onOpenBio: (anchor: HTMLElement) => void;
-  onOpenRelations: (anchor: HTMLElement) => void;
-}) {
+  function CompactCharacterCard({
+    c, t,
+    onEdit, onDelete,
+    onOpenBio, onOpenRelations
+  }: {
+    c: Character; t: (k:string)=>string;
+    onEdit: () => void; onDelete: () => void;
+    onOpenBio: (anchor: HTMLElement) => void;
+    onOpenRelations: (anchor: HTMLElement) => void;
+  }) {
   const arch = c.archetypes || [];
   const nature = summarizeInline(c.nature, 3);
   const attitude = summarizeInline(c.attitude, 3);
@@ -459,17 +458,6 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
 
   const otherCharacters = allCharacters.filter(c => c.id !== draft.id);
   const canRelate = otherCharacters.length > 0;
-  const addRelation = () => {
-    if (!canRelate) return;
-    const first = otherCharacters[0]?.id;
-    set({ relations: [...(draft.relations ?? []), { id: crypto.randomUUID(), targetId: first, description: '' }] });
-  };
-  const updateRelation = (id: string, patch: Partial<CharacterRelation>) => {
-    set({ relations: (draft.relations ?? []).map(r => r.id === id ? { ...r, ...patch } : r) });
-  };
-  const removeRelation = (id: string) => {
-    set({ relations: (draft.relations ?? []).filter(r => r.id !== id) });
-  };
 
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>

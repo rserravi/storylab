@@ -1,5 +1,4 @@
-import { Box, Paper, Tabs, Tab, Button, Typography, TextField, Chip } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import { Box, Paper, Tabs, Tab, Typography, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useProjects } from '../../state/projectStore';
 import { useScreenplay } from '../../state/screenplayStore';
@@ -17,7 +16,7 @@ const STEPS = ['S1 Sinopsis','S3 Puntos giro','S2 Tratamiento','S4 Personajes','
 export default function StoryMachineView() {
   const [tab, setTab] = useState(0);
   const { activeProjectId } = useProjects();
-  const { screenplay, load, setTitle, upsertScene } = useScreenplay();
+  const { screenplay, load, setTitle } = useScreenplay();
 
   useEffect(() => { if (activeProjectId) load(activeProjectId); }, [activeProjectId]);
 
