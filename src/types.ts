@@ -45,8 +45,9 @@ export type IdeaRow = {
 };
 
 export type Screenplay = {
-  id: string; 
-  title: string; 
+  id: string;
+  title: string;
+  author?: string;
   projectId: string;
   synopsis?: string;
   treatment?: string;
