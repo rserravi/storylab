@@ -297,7 +297,7 @@ export default function S4CharactersEditor() {
     <Paper variant="outlined" sx={{ p: 1.5 }}>
       {/* Header: nombre + acciones */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: .5 }}>
-        <Avatar src={c.image} sx={{ width: 24, height: 24 }}>
+        <Avatar src={c.image?.src} sx={{ width: 24, height: 24 }}>
           <PersonIcon fontSize="small" />
         </Avatar>
         <Typography variant="subtitle1" sx={{ fontWeight: 600, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -315,25 +315,6 @@ export default function S4CharactersEditor() {
         </Tooltip>
       </Stack>
 
-      {/* Arquetipos — chips con +N */}
-      <Box sx={{ mb: 1 }}>
-        <Typography variant="caption" sx={{ display:'block', mb:.25, fontWeight:600, opacity:.8 }}>
-          {t('s4.card.archetypes')}
-        </Typography>
-        <Stack direction="row" spacing={.5} useFlexGap flexWrap="wrap">
-          {arch.slice(0, 3).map(a => (
-            <Chip key={a} size="small" label={archLabel(a, t)} variant="outlined" />
-          ))}
-          {arch.length > 3 && (
-            <Tooltip title={arch.map(a => archLabel(a, t)).join(' · ')}>
-              <Chip size="small" label={`+${arch.length - 3}`} />
-            </Tooltip>
-          )}
-          {arch.length === 0 && <Typography variant="body2">—</Typography>}
-        </Stack>
-      </Box>
-
-      <Divider sx={{ my: 1 }} />
 
       {/* Naturaleza / Actitud */}
       <Box sx={{ mb: .5 }}>
@@ -651,7 +632,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
         <Button onClick={()=>onSave(normalizeDraft(draft))} variant="contained">{t('s4.modal.save')}</Button>
       </DialogActions>
     </Dialog>
-    <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpe(false)} maxWidth="sm" fullWidth>
+    <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpen(false)} maxWidth="sm" fullWidth>
       <DialogTitle>{t('s6.ai.title')}</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} sx={{ mt: .5 }}>
