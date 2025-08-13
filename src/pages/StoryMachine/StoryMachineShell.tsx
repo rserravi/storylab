@@ -6,7 +6,7 @@ import { useScreenplay } from '../../state/screenplayStore';
 
 export default function StoryMachineShell() {
   const { activeProjectId } = useProjects();
-  const { screenplay, load, setTitle, upsertScene } = useScreenplay();
+  const { screenplay, load, setTitle } = useScreenplay();
 
   useEffect(() => { if (activeProjectId) load(activeProjectId); }, [activeProjectId]);
 

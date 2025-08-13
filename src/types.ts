@@ -48,8 +48,10 @@ export type Screenplay = {
   id: string; 
   title: string; 
   projectId: string;
-  synopsis?: string; 
+  synopsis?: string;
   treatment?: string;
+  treatmentMd?: string;
+  treatmentHtml?: string;
   turningPoints?: { id: string; type: TurningPointType; summary: string }[];
   subplots?: Subplot[];
   scenes: Scene[]; 
