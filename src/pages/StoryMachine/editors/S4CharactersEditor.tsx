@@ -19,27 +19,20 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { useScreenplay } from '../../../state/screenplayStore';
 import type { Character, ConflictLevel } from '../../../types';
 import { ARCHETYPES } from '../../../data/archetypes';
-import { TRAIT_SUGGESTIONS } from '../../../data/traits';
+import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
 
-/* ───────────────── helpers de etiquetado i18n (guardamos valores en ES) ───────────────── */
+/* ───────────────── helpers de etiquetado i18n (guardamos códigos) ───────────────── */
 
-const ARCH_CODE: Record<string, 'hero'|'mentor'|'threshold'|'herald'|'trickster'|'shadow'|'shapeshifter'> = {
-  'Héroe': 'hero',
-  'Mentor': 'mentor',
-  'Guardián (del umbral)': 'threshold',
-  'Heraldo': 'herald',
-  'Pícaro / Embaucador': 'trickster',
-  'Sombra': 'shadow',
-  'Camaleón / Cambiante': 'shapeshifter'
-};
 const CONFLICT_CODE: Record<string, 'extrapersonal'|'personal'|'internal'> = {
   'Extrapersonal': 'extrapersonal',
   'Personal': 'personal',
   'Interno': 'internal'
 };
 function archLabel(value: string, t:(k:string)=>string) {
-  const code = ARCH_CODE[value]; return code ? t(`arch.${code}`) : value;
+  const key = `arch.${value}`;
+  const label = t(key);
+  return label === key ? value : label;
 }
 function conflictLabel(value: string, t:(k:string)=>string) {
   const code = CONFLICT_CODE[value]; return code ? t(`s4.conflict.level.${code}`) : value;
@@ -110,6 +103,7 @@ function normalizeDraft(d: Character): Character {
 export default function S4CharactersEditor() {
   const t = useT();
   const tx = useTx();
+  const traitSuggestions = useTraitSuggestions();
   const { screenplay, patch } = useScreenplay();
   const characters = screenplay?.characters ?? [];
 
@@ -486,12 +480,12 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
             renderTags={(value, getTagProps) =>
               value.map((opt, idx) => <Chip {...getTagProps({ index: idx })} label={archLabel(opt as string, t)} size="small" />)
             }
-            renderInput={(p)=><TextField {...p} label={t('s4.modal.archetypes')} placeholder={archLabel('Héroe', t)} />}
+            renderInput={(p)=><TextField {...p} label={t('s4.modal.archetypes')} placeholder={archLabel('hero', t)} />}
           />
 
           <Autocomplete
             multiple freeSolo
-            options={TRAIT_SUGGESTIONS as unknown as string[]}
+            options={traitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
             value={draft.nature}
             onChange={(_, v)=>set({ nature: dedupeStrings(v as string[]) })}
@@ -499,7 +493,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
           />
           <Autocomplete
             multiple freeSolo
-            options={TRAIT_SUGGESTIONS as unknown as string[]}
+            options={traitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
             value={draft.attitude}
             onChange={(_, v)=>set({ attitude: dedupeStrings(v as string[]) })}
