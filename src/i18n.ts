@@ -146,7 +146,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.conflict.internal': 'Conflicto interno',
     's4.card.conflict.personal': 'Conflicto personal',
     's4.card.conflict.extrapersonal': 'Conflicto extrapersonal',
-    's4.card.relations': 'Relaciones con otros personajes',
+    's4.card.relations': 'Relaciones',
 
     's4.card.paradoxes': 'Paradojas y contradicciones',
     's4.card.biography': 'Biografía',
@@ -479,7 +479,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.conflict.internal': 'Internal conflict',
     's4.card.conflict.personal': 'Personal conflict',
     's4.card.conflict.extrapersonal': 'Extrapersonal conflict',
-    's4.card.relations': 'Relationships with other characters',
+    's4.card.relations': 'Relationships',
 
     's4.card.paradoxes': 'Paradoxes & contradictions',
     's4.card.biography': 'Biography',
@@ -806,7 +806,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.conflict.internal': 'Conflicte intern',
     's4.card.conflict.personal': 'Conflicte personal',
     's4.card.conflict.extrapersonal': 'Conflicte extrapersonal',
-    's4.card.relations': 'Relacions amb altres personatges',
+    's4.card.relations': 'Relacions',
 
     's4.card.paradoxes': 'Paradoxes i contradiccions',
     's4.card.biography': 'Biografia',
