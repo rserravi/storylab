@@ -13,6 +13,7 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import ArticleIcon from '@mui/icons-material/Article';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
@@ -459,9 +460,18 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
   const otherCharacters = allCharacters.filter(c => c.id !== draft.id);
   const canRelate = otherCharacters.length > 0;
 
+  const handleAiComplete = () => {
+    // TODO: implement AI completion for character fields
+  };
+
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
-      <DialogTitle>{t('s4.modal.title')}</DialogTitle>
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ px:3, py:2 }}>
+        <DialogTitle sx={{ flexGrow:1, p:0 }}>{t('s4.modal.title')}</DialogTitle>
+        <Button startIcon={<AutoAwesomeIcon/>} onClick={handleAiComplete}>
+          {t('s4.modal.aiComplete')}
+        </Button>
+      </Stack>
       <DialogContent dividers sx={{ maxHeight:'80vh' }}>
         <Stack spacing={2} sx={{ mt: .5 }}>
           <TextField label={t('s4.modal.name')} value={draft.name} onChange={(e)=>set({ name: e.target.value })} fullWidth />

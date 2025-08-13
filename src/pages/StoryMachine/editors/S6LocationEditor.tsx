@@ -407,6 +407,7 @@ function LocationEditDialog({
   onCancel: () => void;
   onSave: (next: Location) => void;
 }) {
+  const t = useT();
   const [draft, setDraft] = useState<Location>(value);
   const [errors, setErrors] = useState<{ name?: string }>({});
 
@@ -467,9 +468,18 @@ function LocationEditDialog({
     }
   };
 
+  const handleAiComplete = () => {
+    // TODO: implement AI completion for location fields
+  };
+
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
-      <DialogTitle>Editar localización</DialogTitle>
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ px:3, py:2 }}>
+        <DialogTitle sx={{ flexGrow:1, p:0 }}>{t('s6.edit')}</DialogTitle>
+        <Button startIcon={<AutoAwesomeIcon/>} onClick={handleAiComplete}>
+          {t('s6.edit.aiComplete')}
+        </Button>
+      </Stack>
       <DialogContent dividers sx={{ maxHeight: '80vh' }}>
         <Stack spacing={2} sx={{ mt: .5 }}>
           <TextField

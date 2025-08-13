@@ -490,9 +490,18 @@ export function SceneEditDialog({
       : []
   );
 
+  const handleAiComplete = () => {
+    // TODO: implement AI completion for scene fields
+  };
+
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
-      <DialogTitle>{t('s7.dialog.title')}</DialogTitle>
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ px:3, py:2 }}>
+        <DialogTitle sx={{ flexGrow:1, p:0 }}>{t('s7.dialog.title')}</DialogTitle>
+        <Button startIcon={<AutoAwesomeIcon/>} onClick={handleAiComplete}>
+          {t('s7.dialog.aiComplete')}
+        </Button>
+      </Stack>
       <DialogContent dividers sx={{ maxHeight: '80vh' }}>
         <Stack spacing={2} sx={{ mt: .5 }}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
