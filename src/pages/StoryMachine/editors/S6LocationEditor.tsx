@@ -26,6 +26,9 @@ import type {
   PlotPointKey
 } from '../../../types';
 import { useT } from '../../../i18n';
+import { useUi } from '../../../state/uiStore';
+import { LOCATION_TAGS } from '../../../data/locationTags';
+import { AI_STYLES, type AIStyle } from '../../../data/aiStyles';
 import { SceneEditDialog } from './S7AllScenesEditor';
 
 /** Extensión local de Location para S6 (retro-compatible) */
@@ -56,14 +59,6 @@ function sanitizeLocations(raw?: BaseLocation[]): Location[] {
   }));
 }
 
-// Sugerencias iniciales de etiquetas
-const TAG_SUGGESTIONS = [
-  'Bar', 'Carretera', 'Casa', 'Calle', 'Oficina', 'Hospital', 'Hotel',
-  'Apartamento', 'Restaurante', 'Bosque', 'Playa', 'Montaña', 'Desierto',
-  'Iglesia', 'Cementerio', 'Tienda', 'Almacén', 'Estación', 'Aeropuerto',
-  'Puerto', 'Coche', 'Metro', 'Autobús', 'Parque', 'Instituto', 'Universidad',
-  'Laboratorio', 'Comisaría', 'Prisión', 'Teatro', 'Cine', 'Museo', 'Nave',
-];
 
 function ensureLocation(locations: BaseLocation[] | undefined, name: string) {
   const n = (name || '').trim();
@@ -256,7 +251,7 @@ export default function S6LocationsEditor() {
 
         {activeTags.length > 0 && (
           <Typography variant="caption" sx={{ opacity:.7 }}>
-            {filtered.length} resultado{filtered.length===1?'':'s'} · {t('s6.filter.active')}
+            {filtered.length} {filtered.length===1 ? t('common.result.one') : t('common.result.other')} · {t('s6.filter.active')}
           </Typography>
         )}
       </Stack>
@@ -331,6 +326,7 @@ function LocationCard({
   onDelete: () => void;
   onCreateSceneHere: () => void;
 }) {
+  const t = useT();
   const cover = loc.images?.[0]?.src;
 
   return (
@@ -340,13 +336,13 @@ function LocationCard({
         <Typography variant="subtitle1" sx={{ fontWeight: 700, flexGrow: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {loc.name || '—'}
         </Typography>
-        <Tooltip title="Crear escena aquí">
+        <Tooltip title={t('s6.tooltip.createSceneHere')}>
           <IconButton size="small" onClick={onCreateSceneHere}><AddLocationAltIcon fontSize="small" /></IconButton>
         </Tooltip>
-        <Tooltip title="Editar">
+        <Tooltip title={t('common.edit')}>
           <IconButton size="small" onClick={onEdit}><EditIcon fontSize="small" /></IconButton>
         </Tooltip>
-        <Tooltip title="Eliminar">
+        <Tooltip title={t('common.delete')}>
           <IconButton size="small" onClick={onDelete} color="error"><DeleteOutlineIcon fontSize="small" /></IconButton>
         </Tooltip>
       </Stack>
@@ -355,7 +351,7 @@ function LocationCard({
       <Stack direction="row" spacing={.5} useFlexGap flexWrap="wrap" sx={{ mb: 1 }}>
         {(loc.tags ?? []).length
           ? (loc.tags ?? []).map(tag => <Chip key={tag} size="small" variant="outlined" label={tag} />)
-          : <Typography variant="body2" sx={{ opacity:.7 }}>Sin etiquetas</Typography>
+          : <Typography variant="body2" sx={{ opacity:.7 }}>{t('s6.tags.none')}</Typography>
         }
       </Stack>
 
@@ -366,7 +362,7 @@ function LocationCard({
         </Box>
       ) : (
         <Box sx={{ mb: 1, borderRadius: 1, height: 140, bgcolor: 'action.hover', display:'flex', alignItems:'center', justifyContent:'center', fontSize: 12, opacity: .6 }}>
-          Sin imagen
+          {t('s6.noImage')}
         </Box>
       )}
 
@@ -384,7 +380,7 @@ function LocationCard({
 
       {/* Escenas que usan esta localización */}
       <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap:'wrap' }}>
-        <Chip size="small" variant="outlined" label={`Escenas: ${sceneNumbers.length}`} />
+        <Chip size="small" variant="outlined" label={`${t('s6.scenes')}: ${sceneNumbers.length}`} />
         {sceneNumbers.slice(0, 6).map(n => (
           <Chip key={n} size="small" label={`#${n}`} />
         ))}
@@ -408,20 +404,21 @@ function LocationEditDialog({
   onSave: (next: Location) => void;
 }) {
   const t = useT();
+  const { lang } = useUi();
   const [draft, setDraft] = useState<Location>(value);
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   // Estado para “Generar Imagen IA” (mock)
   const [aiOpen, setAiOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [aiStyle, setAiStyle] = useState<'Cinemático'|'Noir'|'Western'|'Sci-Fi'|'Fantasy'|'Thriller'|'Romance'|'Horror'|'Animación'>('Cinemático');
+  const [aiStyle, setAiStyle] = useState<AIStyle>('cinematic');
   const [aiBusy, setAiBusy] = useState(false);
 
   useEffect(() => { setDraft(value); setErrors({}); }, [value?.id]);
 
   const validate = () => {
     const e: { name?: string } = {};
-    if (!draft.name.trim()) e.name = 'Requerido';
+    if (!draft.name.trim()) e.name = t('validation.requiredField');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -450,16 +447,17 @@ function LocationEditDialog({
 
   // Sugerencias de tags = existentes + catálogo base
   const tagOptions = useMemo(() => {
-    const set = new Set([ ...TAG_SUGGESTIONS, ...(allTags ?? []) ]);
+    const base = LOCATION_TAGS[lang as 'es' | 'en' | 'ca'] || LOCATION_TAGS.es;
+    const set = new Set([ ...base, ...(allTags ?? []) ]);
     return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [allTags]);
+  }, [allTags, lang]);
 
   // Generación mock
   const handleAIGenerate = async () => {
     if (!aiPrompt.trim()) return;
     setAiBusy(true);
     try {
-      const img = await generateMockImageFromPrompt(aiPrompt, aiStyle);
+      const img = await generateMockImageFromPrompt(aiPrompt, t(`s6.aiStyle.${aiStyle}`));
       setDraft(prev => ({ ...prev, images: [ ...(prev.images ?? []), img ] }));
       setAiOpen(false);
       setAiPrompt('');
@@ -483,7 +481,7 @@ function LocationEditDialog({
       <DialogContent dividers sx={{ maxHeight: '80vh' }}>
         <Stack spacing={2} sx={{ mt: .5 }}>
           <TextField
-            label="Nombre"
+            label={t('s6.name')}
             value={draft.name}
             onChange={(e)=>setDraft({ ...draft, name: e.target.value })}
             error={!!errors.name}
@@ -491,7 +489,7 @@ function LocationEditDialog({
             fullWidth
           />
           <TextField
-            label="Descripción"
+            label={t('s6.description')}
             value={draft.description}
             onChange={(e)=>setDraft({ ...draft, description: e.target.value })}
             multiline minRows={3} fullWidth
@@ -504,13 +502,13 @@ function LocationEditDialog({
             options={tagOptions}
             value={draft.tags ?? []}
             onChange={(_, v)=> setDraft(prev => ({ ...prev, tags: (v as string[]).map(x => x.trim()).filter(Boolean) }))}
-            renderInput={(p) => <TextField {...p} label="Etiquetas (chips)" placeholder="Bar, Carretera, Casa…" />}
+            renderInput={(p) => <TextField {...p} label={t('s6.tags.label')} placeholder={t('s6.tags.placeholder')} />}
           />
 
           <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
             {/* Subir imágenes */}
             <Button component="label" startIcon={<UploadIcon/>} variant="outlined">
-              Subir imágenes
+              {t('s6.upload')}
               <input
                 type="file"
                 accept="image/*"
@@ -526,11 +524,11 @@ function LocationEditDialog({
               variant="outlined"
               onClick={()=> setAiOpen(true)}
             >
-              Generar Imagen IA
+              {t('s6.ai.button')}
             </Button>
 
             <Typography variant="caption" sx={{ opacity:.7 }}>
-              PNG/JPG/WebP. (Mock local: se guardan como data URL)
+              {t('s6.upload.info')}
             </Typography>
           </Stack>
 
@@ -544,12 +542,12 @@ function LocationEditDialog({
                     title={img.name || ''}
                     actionIcon={
                       <Stack direction="row" spacing={0.5} sx={{ mr: 0.5 }}>
-                        <Tooltip title="Establecer como portada">
+                        <Tooltip title={t('s6.tooltip.setCover')}>
                           <IconButton size="small" onClick={()=>setCover(img.id)} sx={{ color: 'white' }}>
                             {draft.images?.[0]?.id === img.id ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Eliminar">
+                        <Tooltip title={t('common.delete')}>
                           <IconButton size="small" onClick={()=>removeImage(img.id)} sx={{ color: 'white' }}>
                             <DeleteOutlineIcon fontSize="small" />
                           </IconButton>
@@ -565,53 +563,53 @@ function LocationEditDialog({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>Cancelar</Button>
+        <Button onClick={onCancel}>{t('common.cancel')}</Button>
         <Button
           variant="contained"
           onClick={() => { if (validate()) onSave(normalizeDraft(draft)); }}
         >
-          Guardar
+          {t('common.save')}
         </Button>
       </DialogActions>
 
       {/* Modal para "Generar Imagen IA" (mock) */}
       <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Generar imagen con IA (mock local)</DialogTitle>
+        <DialogTitle>{t('s6.ai.modalTitle')}</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2} sx={{ mt: .5 }}>
             <TextField
-              label="Descripción (prompt)"
+              label={t('s6.ai.prompt.label')}
               value={aiPrompt}
               onChange={(e)=>setAiPrompt(e.target.value)}
-              placeholder="Ej.: Fachada art déco iluminada con neones, noche lluviosa, travel de cámara…"
+              placeholder={t('s6.ai.prompt.placeholder')}
               multiline minRows={3}
               fullWidth
             />
             <TextField
-              label="Estilo"
+              label={t('s6.ai.style.label')}
               select
               value={aiStyle}
-              onChange={(e)=>setAiStyle(e.target.value as any)}
+              onChange={(e)=>setAiStyle(e.target.value as AIStyle)}
               SelectProps={{ native: true }}
             >
-              {['Cinemático','Noir','Western','Sci-Fi','Fantasy','Thriller','Romance','Horror','Animación'].map(s =>
-                <option key={s} value={s}>{s}</option>
+              {AI_STYLES.map(s =>
+                <option key={s} value={s}>{t(`s6.aiStyle.${s}`)}</option>
               )}
             </TextField>
             <Typography variant="caption" sx={{ opacity:.7 }}>
-              (Sin backend aún) Se generará un **concept** local de 1024×576 con el prompt como referencia.
+              {t('s6.ai.note')}
             </Typography>
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>!aiBusy && setAiOpen(false)} disabled={aiBusy}>Cancelar</Button>
+          <Button onClick={()=>!aiBusy && setAiOpen(false)} disabled={aiBusy}>{t('common.cancel')}</Button>
           <Button
             variant="contained"
             onClick={handleAIGenerate}
             disabled={aiBusy || !aiPrompt.trim()}
             startIcon={aiBusy ? <CircularProgress size={18} /> : <AutoAwesomeIcon/>}
           >
-            {aiBusy ? 'Generando…' : 'Generar'}
+            {aiBusy ? t('s6.ai.generating') : t('s6.ai.generate')}
           </Button>
         </DialogActions>
       </Dialog>
