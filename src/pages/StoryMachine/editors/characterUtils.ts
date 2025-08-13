@@ -11,12 +11,6 @@ export const ARCH_CODE: Record<string, 'hero' | 'mentor' | 'threshold' | 'herald
   'Camaleón / Cambiante': 'shapeshifter',
 };
 
-export const CONFLICT_CODE: Record<string, 'extrapersonal' | 'personal' | 'internal'> = {
-  'Extrapersonal': 'extrapersonal',
-  'Personal': 'personal',
-  'Interno': 'internal',
-};
-
 export const filterOptions = createFilterOptions<string>({
   ignoreAccents: true,
   ignoreCase: true,
@@ -28,6 +22,7 @@ export function createEmpty(): Character {
   return {
     id: crypto.randomUUID(),
     name: '',
+    image: '',
     archetypes: [],
     nature: [],
     attitude: [],
@@ -62,6 +57,7 @@ export function normalizeDraft(d: Character): Character {
   return {
     ...d,
     name: (d.name || '').trim(),
+    image: (d.image || '').trim(),
     archetypes: dedupeStrings(d.archetypes),
     nature: dedupeStrings(d.nature),
     attitude: dedupeStrings(d.attitude),
@@ -73,6 +69,7 @@ export function normalizeDraft(d: Character): Character {
     conflictPersonal: (d.conflictPersonal || '').trim(),
     conflictExtrapersonal: (d.conflictExtrapersonal || '').trim(),
     conflictDesc: (d.conflictDesc || '').trim(),
+    image: d.image ? { ...d.image, name: (d.image.name || '').trim() } : undefined,
     relations: (d.relations || []).map((r) => ({ ...r, description: (r.description || '').trim() })),
     paradoxes: (d.paradoxes || '').trim(),
     biography: (d.biography || '').trim(),
