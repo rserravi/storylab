@@ -4,7 +4,7 @@ import type { Screenplay, Scene, IdeaRow } from '../types';
 
 type SPState = {
   screenplay: Screenplay | null;
-  load: (projectId: string) => Promise<void>;
+  load: (projectId: string, defaults?: { title?: string; author?: string }) => Promise<void>;
   setTitle: (title: string) => void;
   setAuthor: (author: string) => void;
   upsertScene: (scene: Partial<Scene>) => void;
@@ -16,8 +16,8 @@ type SPState = {
 
 export const useScreenplay = create<SPState>((set, get) => ({
   screenplay: null,
-  load: async (projectId) => {
-    const sp = await mockScreenplays.getOrCreateByProject(projectId);
+  load: async (projectId, defaults) => {
+    const sp = await mockScreenplays.getOrCreateByProject(projectId, defaults);
     // asegúrate de que haya estructura de ideation
     if (!sp.ideation) sp.ideation = { rows: [], decidedRowId: null };
     set({ screenplay: sp });

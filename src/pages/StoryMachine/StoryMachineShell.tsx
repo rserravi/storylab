@@ -3,12 +3,19 @@ import { Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useProjects } from '../../state/projectStore';
 import { useScreenplay } from '../../state/screenplayStore';
+import { useAuth } from '../../state/authStore';
 
 export default function StoryMachineShell() {
-  const { activeProjectId } = useProjects();
+  const { projects, activeProjectId } = useProjects();
+  const { user } = useAuth();
   const { screenplay, load, setTitle, setAuthor } = useScreenplay();
 
-  useEffect(() => { if (activeProjectId) load(activeProjectId); }, [activeProjectId]);
+  useEffect(() => {
+    if (activeProjectId) {
+      const project = projects.find(p => p.id === activeProjectId);
+      load(activeProjectId, { title: project?.name, author: user?.name });
+    }
+  }, [activeProjectId, projects, user?.name]);
 
   return (
     <Box>
