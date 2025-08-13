@@ -128,6 +128,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.arc': 'Evolución (arco de personaje)',
     's4.card.conflict': 'Conflicto (McKee)',
 
+
     's4.card.conflict.level': 'Conflicto — nivel (McKee)',
     's4.card.conflict.desc': 'Conflicto — descripción',
     's4.card.conflict.internal': 'Conflicto interno',
@@ -762,6 +763,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.card.need.h2': 'Necessitat dramàtica — 2a meitat (després de l’Ordalia)',
     's4.card.arc': 'Evolució (arc de personatge)',
     's4.card.conflict': 'Conflicte (McKee)',
+
 
     's4.card.conflict.level': 'Conflicte — nivell (McKee)',
     's4.card.conflict.desc': 'Conflicte — descripció',

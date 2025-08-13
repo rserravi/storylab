@@ -34,6 +34,7 @@ export function createEmpty(): Character {
     conflictPersonal: '',
     conflictExtrapersonal: '',
     image: undefined,
+
     conflictLevel: 'Interno',
     conflictDesc: '',
     relations: [],
@@ -69,6 +70,7 @@ export function normalizeDraft(d: Character): Character {
     conflictInternal: (d.conflictInternal || '').trim(),
     conflictPersonal: (d.conflictPersonal || '').trim(),
     conflictExtrapersonal: (d.conflictExtrapersonal || '').trim(),
+
     conflictDesc: (d.conflictDesc || '').trim(),
     image: d.image ? { ...d.image, name: (d.image.name || '').trim() } : undefined,
     relations: (d.relations || []).map((r) => ({ ...r, description: (r.description || '').trim() })),

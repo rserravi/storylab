@@ -83,7 +83,6 @@ export type Character = {
   conflictPersonal: string;   // Conflicto personal
   conflictExtrapersonal: string; // Conflicto extrapersonal
   image?: { id: string; src: string; name?: string }; // Imagen del personaje
-
   relations: CharacterRelation[];  // Relaciones con otros personajes
   paradoxes: string;      // Paradojas/Contradicciones
   biography: string;     // Biografía
