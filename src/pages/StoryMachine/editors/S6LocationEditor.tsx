@@ -120,7 +120,8 @@ export default function S6LocationsEditor() {
       const key = (s.locationName || '').trim();
       if (!key) return;
       const arr = map.get(key) ?? [];
-      arr.push(idx + 1); // nº de escena = índice + 1
+      const num = s.number || idx + 1; // nº de escena = índice + 1 por defecto
+      arr.push(num);
       map.set(key, arr);
     });
     return map;
@@ -130,6 +131,11 @@ export default function S6LocationsEditor() {
   const createSceneAt = (locationName: string) => {
     const newScene: Scene = {
       id: crypto.randomUUID(),
+      number: (screenplay?.scenes?.length ?? 0) + 1,
+      slugline: '',
+      characters: [],
+      synopsis: '',
+      isKey: false,
       locationName: locationName.trim(),
       placeType: 'INT',
       timeOfDay: 'DAY',
@@ -138,7 +144,7 @@ export default function S6LocationsEditor() {
       purpose: '',
       subplotId: null,
       characterIds: []
-    } as Scene;
+    };
     patch({ scenes: [ ...(screenplay?.scenes ?? []), newScene ] });
   };
 

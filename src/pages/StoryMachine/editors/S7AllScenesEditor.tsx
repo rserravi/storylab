@@ -31,6 +31,11 @@ import type {
 function createEmptyScene(): Scene {
   return {
     id: crypto.randomUUID(),
+    number: 0,
+    slugline: '',
+    characters: [],
+    synopsis: '',
+    isKey: false,
     locationName: '',
     placeType: 'INT',
     timeOfDay: 'DAY',
@@ -123,9 +128,14 @@ export default function S7AllScenesEditor() {
   useEffect(() => {
     const raw = (screenplay?.scenes ?? []) as any[];
     let changed = false;
-    const sanitized = raw.map((s) => {
+    const sanitized = raw.map((s, i) => {
       const fixed: Scene = {
         id: s.id ?? crypto.randomUUID(),
+        number: typeof s.number === 'number' ? s.number : i + 1,
+        slugline: s.slugline ?? '',
+        characters: Array.isArray(s.characters) ? s.characters : [],
+        synopsis: s.synopsis ?? '',
+        isKey: !!s.isKey,
         locationName: s.locationName ?? '',
         placeType: (s.placeType ?? 'INT') as ScenePlaceType,
         timeOfDay: (s.timeOfDay ?? 'DAY') as TimeOfDay,
@@ -139,7 +149,12 @@ export default function S7AllScenesEditor() {
         fixed.locationName !== s.locationName ||
         fixed.placeType !== s.placeType ||
         fixed.timeOfDay !== s.timeOfDay ||
-        (Array.isArray(s.characterIds) ? false : true)
+        (Array.isArray(s.characterIds) ? false : true) ||
+        typeof s.number !== 'number' ||
+        fixed.slugline !== s.slugline ||
+        (Array.isArray(s.characters) ? false : true) ||
+        fixed.synopsis !== s.synopsis ||
+        (!!s.isKey) !== fixed.isKey
       ) changed = true;
       return fixed;
     });

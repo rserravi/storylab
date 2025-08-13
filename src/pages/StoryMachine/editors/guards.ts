@@ -1,4 +1,4 @@
-import type { Screenplay, TurningPointType, IdeaRow, UniversalTheme } from '../../../types';
+import type { Screenplay, TurningPointType, IdeaRow, UniversalTheme, Scene } from '../../../types';
 
 export const hasMinSynopsis = (synopsis?: string) => (synopsis?.trim().split(/\s+/).length || 0) >= 120;
 
@@ -21,7 +21,7 @@ export const hasProtagonist = (chars?: { name: string; isProtagonist?: boolean }
 export const hasLinkedSubplots = (subs?: { name: string; ownerId?: string }[]) =>
   (subs||[]).every(s => s.name.trim() && s.ownerId);
 
-export const hasMinKeyScenes = (scenes?: { isKey?: boolean }[]) =>
+export const hasMinKeyScenes = (scenes?: Scene[]) =>
   (scenes||[]).filter(s => s.isKey).length >= 5;
 
 export const hasAllScenes = (scenes?: unknown[]) => (scenes||[]).length >= 30; // mock
