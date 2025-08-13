@@ -52,7 +52,6 @@ function conflictChipColor(level: string): 'default'|'info'|'warning'|'error' {
 export default function S4CharactersEditor() {
   const t = useT();
   const tx = useTx();
-  const traitSuggestions = useTraitSuggestions();
   const { screenplay, patch } = useScreenplay();
   const characters = screenplay?.characters ?? [];
 
@@ -396,6 +395,7 @@ type EditProps = {
 
 function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: EditProps) {
   const t = useT();
+  const traitSuggestions = useTraitSuggestions();
   const [draft, setDraft] = useState<Character>(value);
   useMemo(() => setDraft(value), [value?.id]); // sync al cambiar personaje
   const set = (patch: Partial<Character>) => setDraft(prev => ({ ...prev, ...patch }));
@@ -450,7 +450,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
           <Autocomplete
             multiple
             freeSolo
-            options={useTraitSuggestions as unknown as string[]}
+            options={traitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
             value={draft.attitude}
             onChange={(_, v) => set({ attitude: dedupeStrings(v as string[]) })}
