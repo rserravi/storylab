@@ -17,13 +17,11 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
-import type { Character, ConflictLevel } from '../../../types';
+import type { Character } from '../../../types';
 import { ARCHETYPES } from '../../../data/archetypes';
 import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
 import {
-  ARCH_CODE,
-  CONFLICT_CODE,
   createEmpty,
   dedupeStrings,
   filterOptions,
@@ -37,15 +35,6 @@ function archLabel(value: string, t:(k:string)=>string) {
   const key = `arch.${value}`;
   const label = t(key);
   return label === key ? value : label;
-}
-function conflictLabel(value: string, t:(k:string)=>string) {
-  const code = CONFLICT_CODE[value]; return code ? t(`s4.conflict.level.${code}`) : value;
-}
-function conflictChipColor(level: string): 'default'|'info'|'warning'|'error' {
-  if (level === 'Interno') return 'info';
-  if (level === 'Personal') return 'warning';
-  if (level === 'Extrapersonal') return 'error';
-  return 'default';
 }
 /* ───────────────── componente principal ───────────────── */
 
@@ -88,8 +77,12 @@ export default function S4CharactersEditor() {
       if (c.archetypes?.some(a => matches(a))) return true;
       if (c.nature?.some(n => matches(n))) return true;
       if (c.attitude?.some(a => matches(a))) return true;
-      if (matches(c.conflictLevel)) return true;
-      if (matches(c.conflictDesc)) return true;
+      if (
+        matches(c.conflictInternal) ||
+        matches(c.conflictPersonal) ||
+        matches(c.conflictExtrapersonal)
+      ) return true;
+      if (matches(c.image?.name)) return true;
       if (matches(c.arc)) return true;
       if (matches(c.needGlobal) || matches(c.needH1) || matches(c.needH2)) return true;
       if (matches(c.biography) || matches(c.voice) || matches(c.paradoxes)) return true;
@@ -305,13 +298,24 @@ export default function S4CharactersEditor() {
 
       {/* Footer: Conflicto + Relaciones (popover) + Voz + Bio (popover) */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
-        <Chip
-          size="small"
-          variant="outlined"
-          color={conflictChipColor(c.conflictLevel)}
-          label={`${t('s4.card.conflict')}: ${c.conflictLevel ? conflictLabel(c.conflictLevel, t) : '—'}`}
-          sx={{ mr: .5 }}
-        />
+        <Typography
+          variant="body2"
+          sx={{
+            mr: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            flexGrow: 1
+          }}
+          title={[
+            `${t('s4.conflict.level.internal')}: ${c.conflictInternal || '—'}`,
+            `${t('s4.conflict.level.personal')}: ${c.conflictPersonal || '—'}`,
+            `${t('s4.conflict.level.extrapersonal')}: ${c.conflictExtrapersonal || '—'}`,
+          ].join('\n')}
+        >
+          {t('s4.conflict.level.internal')}: {c.conflictInternal || '—'} · {t('s4.conflict.level.personal')}: {c.conflictPersonal || '—'} · {t('s4.conflict.level.extrapersonal')}: {c.conflictExtrapersonal || '—'}
+        </Typography>
 
         {/* Relaciones (conteo + popover) */}
         <Tooltip title={t('s4.card.relations')}>
@@ -338,14 +342,14 @@ export default function S4CharactersEditor() {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              flexGrow: 1
+              flexGrow: 0
             }}
             title={`${t('s4.card.voice')}: ${voiceShort}`}
           >
             🔊 {voiceShort}
           </Typography>
         ) : (
-          <Typography variant="body2" sx={{ ml: .5, opacity:.7, flexGrow: 1 }}>—</Typography>
+          <Typography variant="body2" sx={{ ml: .5, opacity:.7, flexGrow: 0 }}>—</Typography>
         )}
 
         {/* Biografía (popover) */}
@@ -397,7 +401,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
   const t = useT();
   const traitSuggestions = useTraitSuggestions();
   const [draft, setDraft] = useState<Character>(value);
-  useMemo(() => setDraft(value), [value?.id]); // sync al cambiar personaje
+  useMemo(() => setDraft({ ...createEmpty(), ...value }), [value?.id]); // sync al cambiar personaje
   const set = (patch: Partial<Character>) => setDraft(prev => ({ ...prev, ...patch }));
 
   const otherCharacters = allCharacters.filter(c => c.id !== draft.id);
@@ -469,26 +473,30 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
 
           <TextField label={t('s4.card.arc')} value={draft.arc} onChange={(e)=>set({ arc: e.target.value })} multiline minRows={3} fullWidth />
 
-          <Stack direction={{ xs:'column', sm:'row' }} spacing={1}>
-            <TextField
-              select
-              label={t('s4.card.conflict.level')}
-              value={draft.conflictLevel}
-              onChange={(e)=>set({ conflictLevel: e.target.value as ConflictLevel })}
-              SelectProps={{ native: true }}
-              sx={{ minWidth: 260 }}
-            >
-              <option value="Extrapersonal">{t('s4.conflict.level.extrapersonal')}</option>
-              <option value="Personal">{t('s4.conflict.level.personal')}</option>
-              <option value="Interno">{t('s4.conflict.level.internal')}</option>
-            </TextField>
-            <TextField
-              label={t('s4.card.conflict.desc')}
-              value={draft.conflictDesc}
-              onChange={(e)=>set({ conflictDesc: e.target.value })}
-              fullWidth
-            />
-          </Stack>
+          <TextField
+            label={t('s4.conflict.level.internal')}
+            value={draft.conflictInternal}
+            onChange={(e)=>set({ conflictInternal: e.target.value })}
+            multiline
+            minRows={2}
+            fullWidth
+          />
+          <TextField
+            label={t('s4.conflict.level.personal')}
+            value={draft.conflictPersonal}
+            onChange={(e)=>set({ conflictPersonal: e.target.value })}
+            multiline
+            minRows={2}
+            fullWidth
+          />
+          <TextField
+            label={t('s4.conflict.level.extrapersonal')}
+            value={draft.conflictExtrapersonal}
+            onChange={(e)=>set({ conflictExtrapersonal: e.target.value })}
+            multiline
+            minRows={2}
+            fullWidth
+          />
 
           <Box>
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb:1 }}>
