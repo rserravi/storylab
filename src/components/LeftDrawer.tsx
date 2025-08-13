@@ -12,24 +12,17 @@ import { useProjects } from '../state/projectStore';
 import { useEffect, useState } from 'react';
 import { useT } from '../i18n';
 
-const STEP_KEYS = [
-  'nav.machine.s1',
-  'nav.machine.s3',
-  'nav.machine.s2',
-  'nav.machine.s4',
-  'nav.machine.s5',
-  'nav.machine.s6',
-  'nav.machine.s7'
+const PRE_STEPS = [
+  { key: 'nav.machine.s1', path: '/machine/s1' },
+  { key: 'nav.machine.s3', path: '/machine/s3' },
+  { key: 'nav.machine.s2', path: '/machine/s2' }
 ] as const;
 
-const STEP_PATHS = [
-  '/machine/s1',
-  '/machine/s3',
-  '/machine/s2',
-  '/machine/s4',
-  '/machine/s5',
-  '/machine/s6',
-  '/machine/s7'
+const OTHER_STEPS = [
+  { key: 'nav.machine.s4', path: '/machine/s4' },
+  { key: 'nav.machine.s5', path: '/machine/s5' },
+  { key: 'nav.machine.s6', path: '/machine/s6' },
+  { key: 'nav.machine.s7', path: '/machine/s7' }
 ] as const;
 
 export default function LeftDrawer({ width, open, onClose }: { width: number; open: boolean; onClose: () => void; }) {
@@ -70,13 +63,25 @@ export default function LeftDrawer({ width, open, onClose }: { width: number; op
         </ListItemButton>
 
         <Collapse in={openMachine} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding subheader={<ListSubheader component="div">{t('nav.steps')}</ListSubheader>}>
-            {STEP_KEYS.map((key, i) => (
+          <List component="div" disablePadding>
+            <ListSubheader component="div">{t('nav.prewriting')}</ListSubheader>
+            {PRE_STEPS.map(({ key, path }) => (
               <ListItemButton
-                key={key}
+                key={path}
                 sx={{ pl: 4 }}
-                selected={loc.pathname === STEP_PATHS[i]}
-                onClick={() => go(STEP_PATHS[i])}
+                selected={loc.pathname === path}
+                onClick={() => go(path)}
+              >
+                <ListItemText primary={t(key)} />
+              </ListItemButton>
+            ))}
+            <Divider component="li" />
+            {OTHER_STEPS.map(({ key, path }) => (
+              <ListItemButton
+                key={path}
+                sx={{ pl: 4 }}
+                selected={loc.pathname === path}
+                onClick={() => go(path)}
               >
                 <ListItemText primary={t(key)} />
               </ListItemButton>
