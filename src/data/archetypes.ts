@@ -1,9 +1,11 @@
 export const ARCHETYPES = [
-  'Héroe',
-  'Mentor',
-  'Guardián (del umbral)',
-  'Heraldo',
-  'Pícaro / Embaucador',
-  'Sombra',
-  'Camaleón / Cambiante'
+  'hero',
+  'mentor',
+  'threshold',
+  'herald',
+  'trickster',
+  'shadow',
+  'shapeshifter'
 ] as const;
+
+export type ArchetypeCode = typeof ARCHETYPES[number];

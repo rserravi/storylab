@@ -14,32 +14,35 @@ import ArticleIcon from '@mui/icons-material/Article';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
 import type { Character, ConflictLevel } from '../../../types';
 import { ARCHETYPES } from '../../../data/archetypes';
-import { TRAIT_SUGGESTIONS } from '../../../data/traits';
+import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
+import {
+  ARCH_CODE,
+  CONFLICT_CODE,
+  createEmpty,
+  dedupeStrings,
+  filterOptions,
+  normalizeDraft,
+  summarizeInline,
+} from './characterUtils';
 
-/* ───────────────── helpers de etiquetado i18n (guardamos valores en ES) ───────────────── */
+/* ───────────────── helpers de etiquetado i18n (guardamos códigos) ───────────────── */
 
-const ARCH_CODE: Record<string, 'hero'|'mentor'|'threshold'|'herald'|'trickster'|'shadow'|'shapeshifter'> = {
-  'Héroe': 'hero',
-  'Mentor': 'mentor',
-  'Guardián (del umbral)': 'threshold',
-  'Heraldo': 'herald',
-  'Pícaro / Embaucador': 'trickster',
-  'Sombra': 'shadow',
-  'Camaleón / Cambiante': 'shapeshifter'
-};
 const CONFLICT_CODE: Record<string, 'extrapersonal'|'personal'|'internal'> = {
   'Extrapersonal': 'extrapersonal',
   'Personal': 'personal',
   'Interno': 'internal'
 };
+
 function archLabel(value: string, t:(k:string)=>string) {
-  const code = ARCH_CODE[value]; return code ? t(`arch.${code}`) : value;
+  const key = `arch.${value}`;
+  const label = t(key);
+  return label === key ? value : label;
 }
 function conflictLabel(value: string, t:(k:string)=>string) {
   const code = CONFLICT_CODE[value]; return code ? t(`s4.conflict.level.${code}`) : value;
@@ -50,68 +53,15 @@ function conflictChipColor(level: string): 'default'|'info'|'warning'|'error' {
   if (level === 'Extrapersonal') return 'error';
   return 'default';
 }
-
-/* ───────────────── datos y utilidades ───────────────── */
-
-const filterOptions = createFilterOptions<string>({ ignoreAccents: true, ignoreCase: true, matchFrom: 'any', limit: 50 });
-
-function createEmpty(): Character {
-  return {
-    id: crypto.randomUUID(),
-    name: '',
-    archetypes: [],
-    nature: [],
-    attitude: [],
-    needGlobal: '',
-    needH1: '',
-    needH2: '',
-    arc: '',
-    conflictLevel: 'Interno',
-    conflictDesc: '',
-    relations: [],
-    paradoxes: '',
-    biography: '',
-    voice: ''
-  };
-}
-
-function summarizeInline(list?: string[], max = 3) {
-  const safe = (list ?? []).map(s => s.trim()).filter(Boolean);
-  const shown = safe.slice(0, max);
-  const rest = Math.max(0, safe.length - shown.length);
-  return { text: shown.join(' · '), rest, full: safe.join(' · ') };
-}
-
-function dedupeStrings(arr: string[]) {
-  return Array.from(new Set(arr.map(s => s.trim()).filter(Boolean)));
-}
-
-function normalizeDraft(d: Character): Character {
-  return {
-    ...d,
-    name: (d.name || '').trim(),
-    archetypes: dedupeStrings(d.archetypes),
-    nature: dedupeStrings(d.nature),
-    attitude: dedupeStrings(d.attitude),
-    needGlobal: (d.needGlobal || '').trim(),
-    needH1: (d.needH1 || '').trim(),
-    needH2: (d.needH2 || '').trim(),
-    arc: (d.arc || '').trim(),
-    conflictDesc: (d.conflictDesc || '').trim(),
-    relations: (d.relations || []).map(r => ({ ...r, description: (r.description || '').trim() })),
-    paradoxes: (d.paradoxes || '').trim(),
-    biography: (d.biography || '').trim(),
-    voice: (d.voice || '').trim()
-  };
-}
-
 /* ───────────────── componente principal ───────────────── */
 
 export default function S4CharactersEditor() {
   const t = useT();
   const tx = useTx();
+  const traitSuggestions = useTraitSuggestions();
   const { screenplay, patch } = useScreenplay();
   const characters = screenplay?.characters ?? [];
+  const traitSuggestions = useTraitSuggestions();
 
   const [editing, setEditing] = useState<Character | null>(null);
 
@@ -486,24 +436,38 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
             renderTags={(value, getTagProps) =>
               value.map((opt, idx) => <Chip {...getTagProps({ index: idx })} label={archLabel(opt as string, t)} size="small" />)
             }
-            renderInput={(p)=><TextField {...p} label={t('s4.modal.archetypes')} placeholder={archLabel('Héroe', t)} />}
+            renderInput={(p)=><TextField {...p} label={t('s4.modal.archetypes')} placeholder={archLabel('hero', t)} />}
           />
 
           <Autocomplete
-            multiple freeSolo
-            options={TRAIT_SUGGESTIONS as unknown as string[]}
+            multiple 
+            freeSolo
+            options={traitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
             value={draft.nature}
-            onChange={(_, v)=>set({ nature: dedupeStrings(v as string[]) })}
-            renderInput={(p)=><TextField {...p} label={t('s4.modal.nature')} placeholder="parco, generoso, misterioso…" />}
+            onChange={(_, v) => set({ nature: dedupeStrings(v as string[]) })}
+            renderInput={(p) => (
+              <TextField
+                {...p}
+                label={t('s4.modal.nature')}
+                placeholder={t('s4.modal.nature.placeholder')}
+              />
+            )}
           />
           <Autocomplete
-            multiple freeSolo
-            options={TRAIT_SUGGESTIONS as unknown as string[]}
+            multiple
+            freeSolo
+            options={traitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
             value={draft.attitude}
-            onChange={(_, v)=>set({ attitude: dedupeStrings(v as string[]) })}
-            renderInput={(p)=><TextField {...p} label={t('s4.modal.attitude')} placeholder="fanfarrón, cortés, valiente…" />}
+            onChange={(_, v) => set({ attitude: dedupeStrings(v as string[]) })}
+            renderInput={(p) => (
+              <TextField
+                {...p}
+                label={t('s4.modal.attitude')}
+                placeholder={t('s4.modal.attitude.placeholder')}
+              />
+            )}
           />
 
           <TextField label={t('s4.card.need.global')} value={draft.needGlobal} onChange={(e)=>set({ needGlobal: e.target.value })} multiline minRows={2} fullWidth />

@@ -27,6 +27,7 @@ import type {
 } from '../../../types';
 import { useT, useTx } from '../../../i18n';
 import { LOCATION_TAGS } from '../../../data/locationTags';
+
 import { SceneEditDialog } from './S7AllScenesEditor';
 
 /** Extensión local de Location para S6 (retro-compatible) */
@@ -342,6 +343,7 @@ function LocationCard({
           <IconButton size="small" onClick={onEdit}><EditIcon fontSize="small" /></IconButton>
         </Tooltip>
         <Tooltip title={t('s6.card.delete')}>
+
           <IconButton size="small" onClick={onDelete} color="error"><DeleteOutlineIcon fontSize="small" /></IconButton>
         </Tooltip>
       </Stack>
@@ -351,6 +353,7 @@ function LocationCard({
         {(loc.tags ?? []).length
           ? (loc.tags ?? []).map(tag => <Chip key={tag} size="small" variant="outlined" label={tag} />)
           : <Typography variant="body2" sx={{ opacity:.7 }}>{t('s6.card.noTags')}</Typography>
+
         }
       </Stack>
 
@@ -362,6 +365,7 @@ function LocationCard({
       ) : (
         <Box sx={{ mb: 1, borderRadius: 1, height: 140, bgcolor: 'action.hover', display:'flex', alignItems:'center', justifyContent:'center', fontSize: 12, opacity: .6 }}>
           {t('s6.card.noImage')}
+
         </Box>
       )}
 
@@ -403,20 +407,21 @@ function LocationEditDialog({
   onSave: (next: Location) => void;
 }) {
   const t = useT();
+  const { lang } = useUi();
   const [draft, setDraft] = useState<Location>(value);
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   // Estado para “Generar Imagen IA” (mock)
   const [aiOpen, setAiOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [aiStyle, setAiStyle] = useState<'Cinemático'|'Noir'|'Western'|'Sci-Fi'|'Fantasy'|'Thriller'|'Romance'|'Horror'|'Animación'>('Cinemático');
+  const [aiStyle, setAiStyle] = useState<AIStyle>('cinematic');
   const [aiBusy, setAiBusy] = useState(false);
 
   useEffect(() => { setDraft(value); setErrors({}); }, [value?.id]);
 
   const validate = () => {
     const e: { name?: string } = {};
-    if (!draft.name.trim()) e.name = 'Requerido';
+    if (!draft.name.trim()) e.name = t('validation.requiredField');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -446,15 +451,16 @@ function LocationEditDialog({
   // Sugerencias de tags = existentes + catálogo base
   const tagOptions = useMemo(() => {
     const set = new Set([ ...LOCATION_TAGS, ...(allTags ?? []) ]);
+
     return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [allTags]);
+  }, [allTags, lang]);
 
   // Generación mock
   const handleAIGenerate = async () => {
     if (!aiPrompt.trim()) return;
     setAiBusy(true);
     try {
-      const img = await generateMockImageFromPrompt(aiPrompt, aiStyle);
+      const img = await generateMockImageFromPrompt(aiPrompt, t(`s6.aiStyle.${aiStyle}`));
       setDraft(prev => ({ ...prev, images: [ ...(prev.images ?? []), img ] }));
       setAiOpen(false);
       setAiPrompt('');
@@ -522,10 +528,11 @@ function LocationEditDialog({
               onClick={()=> setAiOpen(true)}
             >
               {t('s6.ai.generateImage')}
+
             </Button>
 
             <Typography variant="caption" sx={{ opacity:.7 }}>
-              PNG/JPG/WebP. (Mock local: se guardan como data URL)
+              {t('s6.upload.info')}
             </Typography>
           </Stack>
 
@@ -540,11 +547,13 @@ function LocationEditDialog({
                     actionIcon={
                       <Stack direction="row" spacing={0.5} sx={{ mr: 0.5 }}>
                           <Tooltip title={t('s6.card.setCover')}>
+
                           <IconButton size="small" onClick={()=>setCover(img.id)} sx={{ color: 'white' }}>
                             {draft.images?.[0]?.id === img.id ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
                           </IconButton>
                         </Tooltip>
                         <Tooltip title={t('s6.card.delete')}>
+
                           <IconButton size="small" onClick={()=>removeImage(img.id)} sx={{ color: 'white' }}>
                             <DeleteOutlineIcon fontSize="small" />
                           </IconButton>
@@ -567,6 +576,7 @@ function LocationEditDialog({
           >
             {t('common.save')}
           </Button>
+
       </DialogActions>
 
       {/* Modal para "Generar Imagen IA" (mock) */}
@@ -579,18 +589,20 @@ function LocationEditDialog({
               value={aiPrompt}
               onChange={(e)=>setAiPrompt(e.target.value)}
               placeholder={t('s6.ai.promptPh')}
+
               multiline minRows={3}
               fullWidth
             />
             <TextField
               label={t('s6.ai.style')}
+
               select
               value={aiStyle}
-              onChange={(e)=>setAiStyle(e.target.value as any)}
+              onChange={(e)=>setAiStyle(e.target.value as AIStyle)}
               SelectProps={{ native: true }}
             >
-              {['Cinemático','Noir','Western','Sci-Fi','Fantasy','Thriller','Romance','Horror','Animación'].map(s =>
-                <option key={s} value={s}>{s}</option>
+              {AI_STYLES.map(s =>
+                <option key={s} value={s}>{t(`s6.aiStyle.${s}`)}</option>
               )}
             </TextField>
             <Typography variant="caption" sx={{ opacity:.7 }}>

@@ -1,0 +1,38 @@
+.sd-editor .ProseMirror {
+  outline: none;
+  min-height: 200px;
+  font-family: "Courier Prime", "Courier New", monospace;
+  font-size: 16px;         /* ~12pt */
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+.sd-editor .ProseMirror p {
+  margin: 0 0 8px 0;
+  white-space: pre-wrap;
+}
+.sd-editor .ProseMirror p[data-type="action"] {
+  margin-left: 0;
+  max-width: 65ch;
+}
+.sd-editor .ProseMirror p[data-type="character"] {
+  margin-left: 22ch;
+  max-width: 16ch;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.sd-editor .ProseMirror p[data-type="parenthetical"] {
+  margin-left: 19ch;
+  max-width: 30ch;
+}
+.sd-editor .ProseMirror p[data-type="dialogue"] {
+  margin-left: 15ch;
+  max-width: 35ch;
+}
+.sd-editor .ProseMirror p[data-type="transition"] {
+  margin-left: auto;
+  max-width: 20ch;
+  text-align: right;
+  font-weight: 700;
+}

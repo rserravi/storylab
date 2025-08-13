@@ -144,6 +144,8 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.archetypes': 'Arquetipos (Vogler)',
     's4.modal.nature': 'Naturaleza (adjetivos)',
     's4.modal.attitude': 'Actitud (cómo se muestra)',
+    's4.modal.nature.placeholder': 'parco, generoso, misterioso…',
+    's4.modal.attitude.placeholder': 'fanfarrón, cortés, valiente…',
     's4.modal.cancel': 'Cancelar',
     's4.modal.save': 'Guardar',
     's4.modal.aiComplete': 'Completar con IA',
@@ -172,6 +174,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's6.name': 'Nombre',
     's6.description': 'Descripción',
     's6.upload': 'Subir imágenes',
+    's6.upload.info': 'PNG/JPG/WebP. (Mock local: se guardan como data URL)',
     's6.photos': 'Fotos',
     's6.scenes': 'Escenas',
     's6.filter.clear': 'Mostrar todas',
@@ -236,6 +239,10 @@ const dict: Record<Locale, Record<string, string>> = {
     's7.dialog.charactersPh': 'Escribe y pulsa Enter…',
     's7.common.none': '—',
     'common.cancel': 'Cancelar',
+    'common.edit': 'Editar',
+    'common.delete': 'Eliminar',
+    'common.result.one': 'resultado',
+    'common.result.other': 'resultados',
     'common.save': 'Guardar',
 
     // Niveles de conflicto (etiquetas UI)
@@ -296,6 +303,7 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // ===== Validaciones =====
     'validation.required': '{field} es obligatorio',
+    'validation.requiredField': 'Requerido',
     'validation.email': 'Formato de correo inválido',
     'validation.minLength': '{field}: mínimo {min} caracteres',
     'validation.maxLength': '{field}: máximo {max} caracteres',
@@ -313,6 +321,11 @@ const dict: Record<Locale, Record<string, string>> = {
     'brand': 'StoryLab',
     'action.close': 'Close',
     'action.logout': 'Log out',
+    'common.cancel': 'Cancel',
+    'common.edit': 'Edit',
+    'common.delete': 'Delete',
+    'common.result.one': 'result',
+    'common.result.other': 'results',
 
     // ===== UI =====
     'ui.dark': 'Dark mode',
@@ -445,6 +458,8 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.archetypes': 'Archetypes (Vogler)',
     's4.modal.nature': 'Nature (adjectives)',
     's4.modal.attitude': 'Attitude (how they present)',
+    's4.modal.nature.placeholder': 'terse, generous, mysterious…',
+    's4.modal.attitude.placeholder': 'boastful, courteous, brave…',
     's4.modal.cancel': 'Cancel',
     's4.modal.save': 'Save',
     's4.modal.aiComplete': 'Complete with AI',
@@ -485,6 +500,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's6.name': 'Name',
     's6.description': 'Description',
     's6.upload': 'Upload images',
+    's6.upload.info': 'PNG/JPG/WebP. (Local mock: saved as data URL)',
     's6.photos': 'Photos',
     's6.scenes': 'Scenes',
     's6.filter.clear': 'Show all',
@@ -548,7 +564,6 @@ const dict: Record<Locale, Record<string, string>> = {
     's7.dialog.characters': 'Characters in scene',
     's7.dialog.charactersPh': 'Type and press Enter…',
     's7.common.none': '—',
-    'common.cancel': 'Cancel',
     'common.save': 'Save',
 
     // Theme labels (UI)
@@ -595,6 +610,7 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // ===== Validations =====
     'validation.required': '{field} is required',
+    'validation.requiredField': 'Required',
     'validation.email': 'Invalid email format',
     'validation.minLength': '{field}: minimum {min} characters',
     'validation.maxLength': '{field}: maximum {max} characters',
@@ -612,6 +628,11 @@ const dict: Record<Locale, Record<string, string>> = {
     'brand': 'StoryLab',
     'action.close': 'Tancar',
     'action.logout': 'Sortir',
+    'common.cancel': 'Cancel·lar',
+    'common.edit': 'Editar',
+    'common.delete': 'Eliminar',
+    'common.result.one': 'resultat',
+    'common.result.other': 'resultats',
 
     // ===== UI =====
     'ui.dark': 'Mode fosc',
@@ -744,6 +765,8 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.modal.archetypes': 'Arquetips (Vogler)',
     's4.modal.nature': 'Naturalesa (adjectius)',
     's4.modal.attitude': 'Actitud (com es mostra)',
+    's4.modal.nature.placeholder': 'parc, generós, misteriós…',
+    's4.modal.attitude.placeholder': 'fanfarró, cortès, valent…',
     's4.modal.cancel': 'Cancel·lar',
     's4.modal.save': 'Desar',
     's4.modal.aiComplete': 'Completar amb IA',
@@ -784,6 +807,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's6.name': 'Nom',
     's6.description': 'Descripció',
     's6.upload': 'Pujar imatges',
+    's6.upload.info': 'PNG/JPG/WebP. (Prova local: es guarden com a data URL)',
     's6.photos': 'Fotos',
     's6.scenes': 'Escenes',
     's6.filter.clear': 'Mostrar totes',
@@ -806,6 +830,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's6.ai.note': '(Sense backend encara) Es generarà un **concept** local de 1024×576 amb el prompt com a referència.',
     's6.ai.generating': 'Generant…',
     's6.ai.generate': 'Generar',
+
 
     // S7 - Escenes
     's7.title': 'Escenes',
@@ -847,7 +872,6 @@ const dict: Record<Locale, Record<string, string>> = {
     's7.dialog.characters': 'Personatges a l’escena',
     's7.dialog.charactersPh': 'Escriu i prem Enter…',
     's7.common.none': '—',
-    'common.cancel': 'Cancel·lar',
     'common.save': 'Desar',
 
     // Etiquetes de temes (UI)
@@ -894,6 +918,7 @@ const dict: Record<Locale, Record<string, string>> = {
 
     // ===== Validacions =====
     'validation.required': '{field} és obligatori',
+    'validation.requiredField': 'Requerit',
     'validation.email': 'Format de correu invàlid',
     'validation.minLength': '{field}: mínim {min} caràcters',
     'validation.maxLength': '{field}: màxim {max} caràcters',

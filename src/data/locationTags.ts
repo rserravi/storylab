@@ -4,4 +4,3 @@ export const LOCATION_TAGS = [
   'Iglesia', 'Cementerio', 'Tienda', 'Almacén', 'Estación', 'Aeropuerto',
   'Puerto', 'Coche', 'Metro', 'Autobús', 'Parque', 'Instituto', 'Universidad',
   'Laboratorio', 'Comisaría', 'Prisión', 'Teatro', 'Cine', 'Museo', 'Nave',
-];
