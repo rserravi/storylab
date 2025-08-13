@@ -1,3 +1,5 @@
+// Extended list (Brady & Lee, opposite pairs; each adjective used as suggestion)
+
 export const TRAIT_SUGGESTIONS = [
   'terse','prodigal','gentle','violent','cheerful','languid','delicate','stupid',
   'generous','miserly','clear','confused','gregarious','isolated','moral','immoral',

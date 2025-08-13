@@ -31,10 +31,18 @@ import {
   summarizeInline,
 } from './characterUtils';
 
-/* ───────────────── helpers de etiquetado i18n (guardamos valores en ES) ───────────────── */
+/* ───────────────── helpers de etiquetado i18n (guardamos códigos) ───────────────── */
+
+const CONFLICT_CODE: Record<string, 'extrapersonal'|'personal'|'internal'> = {
+  'Extrapersonal': 'extrapersonal',
+  'Personal': 'personal',
+  'Interno': 'internal'
+};
 
 function archLabel(value: string, t:(k:string)=>string) {
-  const code = ARCH_CODE[value]; return code ? t(`arch.${code}`) : value;
+  const key = `arch.${value}`;
+  const label = t(key);
+  return label === key ? value : label;
 }
 function conflictLabel(value: string, t:(k:string)=>string) {
   const code = CONFLICT_CODE[value]; return code ? t(`s4.conflict.level.${code}`) : value;
@@ -50,6 +58,7 @@ function conflictChipColor(level: string): 'default'|'info'|'warning'|'error' {
 export default function S4CharactersEditor() {
   const t = useT();
   const tx = useTx();
+  const traitSuggestions = useTraitSuggestions();
   const { screenplay, patch } = useScreenplay();
   const characters = screenplay?.characters ?? [];
   const traitSuggestions = useTraitSuggestions();
@@ -427,11 +436,11 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
             renderTags={(value, getTagProps) =>
               value.map((opt, idx) => <Chip {...getTagProps({ index: idx })} label={archLabel(opt as string, t)} size="small" />)
             }
-            renderInput={(p)=><TextField {...p} label={t('s4.modal.archetypes')} placeholder={archLabel('Héroe', t)} />}
+            renderInput={(p)=><TextField {...p} label={t('s4.modal.archetypes')} placeholder={archLabel('hero', t)} />}
           />
 
           <Autocomplete
-            multiple
+            multiple 
             freeSolo
             options={traitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
