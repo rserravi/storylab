@@ -210,7 +210,11 @@ export default function S7AllScenesEditor() {
     patch({ scenes: next });
   };
 
-  const addScene = () => patch({ scenes: [...scenes, createEmptyScene()] });
+  const addScene = () => {
+    const newScene = createEmptyScene();
+    patch({ scenes: [...scenes, newScene] });
+    setEditing(newScene);
+  };
   const updateScene = (id: string, s: Scene) =>
     patch({ scenes: (screenplay?.scenes ?? []).map(x => x.id === id ? s : x) });
   const removeScene = (id: string) =>
@@ -451,7 +455,7 @@ function SortableSceneCard(props: {
 
 /* ───────── Modal de edición ───────── */
 
-function SceneEditDialog({
+export function SceneEditDialog({
   open, value, allLocations, allSubplots, allCharacters, onCancel, onSave,
   timeOptions, ppOptions
 }: {
