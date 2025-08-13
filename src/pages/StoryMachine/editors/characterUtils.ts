@@ -22,6 +22,7 @@ export function createEmpty(): Character {
   return {
     id: crypto.randomUUID(),
     name: '',
+    image: '',
     archetypes: [],
     nature: [],
     attitude: [],
@@ -33,6 +34,9 @@ export function createEmpty(): Character {
     conflictPersonal: '',
     conflictExtrapersonal: '',
     image: undefined,
+
+    conflictLevel: 'Interno',
+    conflictDesc: '',
     relations: [],
     paradoxes: '',
     biography: '',
@@ -55,6 +59,7 @@ export function normalizeDraft(d: Character): Character {
   return {
     ...d,
     name: (d.name || '').trim(),
+    image: (d.image || '').trim(),
     archetypes: dedupeStrings(d.archetypes),
     nature: dedupeStrings(d.nature),
     attitude: dedupeStrings(d.attitude),
@@ -65,6 +70,8 @@ export function normalizeDraft(d: Character): Character {
     conflictInternal: (d.conflictInternal || '').trim(),
     conflictPersonal: (d.conflictPersonal || '').trim(),
     conflictExtrapersonal: (d.conflictExtrapersonal || '').trim(),
+
+    conflictDesc: (d.conflictDesc || '').trim(),
     image: d.image ? { ...d.image, name: (d.image.name || '').trim() } : undefined,
     relations: (d.relations || []).map((r) => ({ ...r, description: (r.description || '').trim() })),
     paradoxes: (d.paradoxes || '').trim(),

@@ -2,7 +2,6 @@ export type User = { id: string; email: string; name: string };
 export type Project = { id: string; name: string; createdAt: string };
 export type TurningPointType = 'inciting'|'lockin'|'midpoint'|'crisis'|'climax';
 
-
 export type Scene = {
   id: string;
   /** Número de escena dentro del guion */
@@ -72,6 +71,7 @@ export type CharacterRelation = {
 export type Character = {
   id: string;
   name: string;
+  image?: string;             // Imagen asociada (URL)
   archetypes: string[];        // Arquetipos (Vogler) — múltiple, pueden cambiar a lo largo de la historia
   nature: string[];            // Naturaleza (listas de adjetivos; múltiple)
   attitude: string[];          // Actitud (listas de adjetivos; múltiple)
