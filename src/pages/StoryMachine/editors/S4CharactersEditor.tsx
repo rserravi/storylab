@@ -122,7 +122,9 @@ export default function S4CharactersEditor() {
   const [q, setQ] = useState('');
 
   const addCharacter = () => {
-    patch({ characters: [...characters, createEmpty()] });
+    const newChar = createEmpty();
+    patch({ characters: [...characters, newChar] });
+    setEditing(newChar);
   };
   const updateCharacter = (id: string, ch: Character) => {
     patch({ characters: (screenplay?.characters ?? []).map(c => c.id === id ? ch : c) });

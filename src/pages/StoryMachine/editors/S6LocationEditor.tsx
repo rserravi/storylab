@@ -17,8 +17,16 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { useScreenplay } from '../../../state/screenplayStore';
-import type { Location as BaseLocation, Scene } from '../../../types';
+import type {
+  Location as BaseLocation,
+  Scene,
+  Character,
+  Subplot,
+  TimeOfDay,
+  PlotPointKey
+} from '../../../types';
 import { useT } from '../../../i18n';
+import { SceneEditDialog } from './S7AllScenesEditor';
 
 /** Extensión local de Location para S6 (retro-compatible) */
 type LocationImage = { id: string; src: string; name?: string };
@@ -56,6 +64,49 @@ const TAG_SUGGESTIONS = [
   'Puerto', 'Coche', 'Metro', 'Autobús', 'Parque', 'Instituto', 'Universidad',
   'Laboratorio', 'Comisaría', 'Prisión', 'Teatro', 'Cine', 'Museo', 'Nave',
 ];
+
+function ensureLocation(locations: BaseLocation[] | undefined, name: string) {
+  const n = (name || '').trim();
+  if (!n) return { next: locations ?? [], name: n };
+  const exists = (locations ?? []).some(l => (l.name || '').toLowerCase() === n.toLowerCase());
+  return {
+    next: exists ? (locations ?? []) : [ ...(locations ?? []), { id: crypto.randomUUID(), name: n } ],
+    name: n
+  };
+}
+
+function ensureCharacters(characters: Character[] | undefined, names: string[] | undefined) {
+  const nextChars = [ ...(characters ?? []) ];
+  const ids: string[] = [];
+  const source = Array.isArray(names) ? names : [];
+  for (const raw of source) {
+    const n = (raw ?? '').trim();
+    if (!n) continue;
+    let found = nextChars.find(c => (c.name || '').toLowerCase() === n.toLowerCase());
+    if (!found) {
+      found = {
+        id: crypto.randomUUID(),
+        name: n,
+        archetypes: [],
+        nature: [],
+        attitude: [],
+        needGlobal: '',
+        needH1: '',
+        needH2: '',
+        arc: '',
+        conflictLevel: 'Interno',
+        conflictDesc: '',
+        relations: [],
+        paradoxes: '',
+        biography: '',
+        voice: ''
+      } as Character;
+      nextChars.push(found);
+    }
+    ids.push(found.id);
+  }
+  return { next: nextChars, ids };
+}
 
 export default function S6LocationsEditor() {
   const t = useT();
@@ -98,11 +149,28 @@ export default function S6LocationsEditor() {
 
   // ===== Estado edición =====
   const [editing, setEditing] = useState<Location | null>(null);
+  const [editingScene, setEditingScene] = useState<Scene | null>(null);
+
+  const timeOptions = useMemo(() => ([
+    { value: 'DAY', label: t('s7.time.day') },
+    { value: 'NIGHT', label: t('s7.time.night') },
+    { value: 'OTHER', label: t('s7.time.other') }
+  ] satisfies { value: TimeOfDay; label: string }[]), [t]);
+
+  const ppOptions = useMemo(() => ([
+    { value: 'incidente', label: t('s7.pp.label.incidente') },
+    { value: 'momentoCambio', label: t('s7.pp.label.momentoCambio') },
+    { value: 'puntoMedio', label: t('s7.pp.label.puntoMedio') },
+    { value: 'crisis', label: t('s7.pp.label.crisis') },
+    { value: 'climax', label: t('s7.pp.label.climax') }
+  ] satisfies { value: PlotPointKey; label: string }[]), [t]);
 
   // ===== Acciones CRUD =====
   const addLocation = () => {
-    const next = [...locations, createEmptyLocation()];
+    const newLoc = createEmptyLocation();
+    const next = [...locations, newLoc];
     patch({ locations: next as any });
+    setEditing(newLoc);
   };
   const updateLocation = (id: string, loc: Location) => {
     const next = locations.map(l => l.id === id ? loc : l);
@@ -146,6 +214,7 @@ export default function S6LocationsEditor() {
       characterIds: []
     };
     patch({ scenes: [ ...(screenplay?.scenes ?? []), newScene ] });
+    setEditingScene(newScene);
   };
 
   return (
@@ -221,6 +290,30 @@ export default function S6LocationsEditor() {
           allTags={uniqueTags}
           onCancel={() => setEditing(null)}
           onSave={(next) => { updateLocation(editing.id, next); setEditing(null); }}
+        />
+      )}
+      {editingScene && (
+        <SceneEditDialog
+          open
+          value={editingScene}
+          allLocations={locations as unknown as BaseLocation[]}
+          allSubplots={(screenplay?.subplots ?? []) as Subplot[]}
+          allCharacters={(screenplay?.characters ?? []) as Character[]}
+          onCancel={() => setEditingScene(null)}
+          onSave={(draft) => {
+            const { next: nextLocs, name } = ensureLocation(screenplay?.locations, draft.locationName);
+            const selectedNames = draft.characterIds as unknown as string[];
+            const { next: nextChars, ids } = ensureCharacters(screenplay?.characters, selectedNames);
+            const clean: Scene = { ...draft, locationName: name, characterIds: ids };
+            patch({
+              locations: nextLocs,
+              characters: nextChars,
+              scenes: (screenplay?.scenes ?? []).map(s => s.id === draft.id ? clean : s)
+            });
+            setEditingScene(null);
+          }}
+          timeOptions={timeOptions}
+          ppOptions={ppOptions}
         />
       )}
     </Box>
