@@ -37,7 +37,6 @@ const editorStyles = {
     outline: 'none',
     minHeight: '50vh',
     padding: '12px',
-    // Tipografía base (MUI body1)
     fontSize: '1rem',
     lineHeight: 1.6,
   },
@@ -82,17 +81,11 @@ export default function S2TreatmentEditor() {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: false // lo reponemos limitado con Heading ext
-      }),
+      StarterKit.configure({ heading: false }),
       Heading.configure({ levels: [1, 2] }),
       Underline,
       Placeholder.configure({
-        placeholder: lang === 'en'
-          ? 'Write your treatment here…'
-          : lang === 'ca'
-          ? 'Escriu el teu tractament aquí…'
-          : 'Escribe aquí tu tratamiento…'
+        placeholder: t('s2.placeholder')
       })
     ],
     content: initialHtml || '<p></p>',
@@ -115,16 +108,13 @@ export default function S2TreatmentEditor() {
         headingStyle: 'atx',
         codeBlockStyle: 'fenced'
       });
-      // Convertimos <u> a __subrayado__ (no estándar en MD, pero lo dejamos como HTML para no perderlo)
       turndown.addRule('underline', {
         filter: ['u'],
         replacement: function (content) {
-          // Conserva HTML <u> para no perder formato
           return `<u>${content}</u>`;
         }
       });
       const markdown = turndown.turndown(html);
-      // Guardamos ambas representaciones para rehidratar sin pérdidas
       patch({ treatmentMd: markdown, treatmentHtml: html });
     } finally {
       setSaving(false);
@@ -134,12 +124,7 @@ export default function S2TreatmentEditor() {
   const aiProposal = () => {
     if (!editor) return;
     const synopsis = (screenplay?.synopsis || '').trim();
-    const ctx =
-      lang === 'en'
-        ? (synopsis ? `\n\nContext: ${synopsis}` : '')
-        : lang === 'ca'
-        ? (synopsis ? `\n\nContext: ${synopsis}` : '')
-        : (synopsis ? `\n\nContexto: ${synopsis}` : '');
+    const ctx = synopsis ? `\n\n${t('s2.ai.contextLabel')} ${synopsis}` : '';
 
     const textES = `# Logline y premisa
 Un protagonista con una necesidad clara se enfrenta a un obstáculo creciente. Lo que está en juego obliga a decidir.
@@ -178,7 +163,6 @@ Obstacles creixents, aliances i sacrificis. Al **Punt Mig / Ordalía**, una prov
 La **Crisi** condueix al **Clímax**. El final mostra la nova normalitat i el canvi intern.${ctx}`;
 
     const md = lang === 'en' ? textEN : lang === 'ca' ? textCA : textES;
-    // Insertamos como HTML para mantener estilos (convertimos md -> html)
     const html = marked.parse(md);
     editor.commands.setContent(html, false);
   };
@@ -188,18 +172,18 @@ La **Crisi** condueix al **Clímax**. El final mostra la nova normalitat i el ca
       {/* Header con acciones a la derecha */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb:1 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          S2 — Tratamiento
+          {t('s2.title')}
         </Typography>
 
-        <Tooltip title="Propuesta IA">
+        <Tooltip title={t('s2.ai.tooltip')}>
           <span>
             <Button size="small" startIcon={<PsychologyIcon />} onClick={aiProposal} sx={{ mr: .5 }}>
-              Propuesta IA
+              {t('s2.ai.button')}
             </Button>
           </span>
         </Tooltip>
 
-        <Tooltip title="Ayuda">
+        <Tooltip title={t('s2.help.tooltip')}>
           <IconButton onClick={() => setHelpOpen(true)}>
             <HelpOutlineIcon />
           </IconButton>
@@ -208,66 +192,66 @@ La **Crisi** condueix al **Clímax**. El final mostra la nova normalitat i el ca
 
       {/* Toolbar WYSIWYG */}
       <Stack direction="row" spacing={1} sx={{ mb:1, flexWrap:'wrap' }}>
-        <Tooltip title="H1"><span>
+        <Tooltip title={t('s2.toolbar.h1Tip')}><span>
           <Button
             size="small"
             startIcon={<LooksOneIcon />}
             variant={editor?.isActive('heading', { level: 1 }) ? 'contained' : 'outlined'}
             onClick={() => editor && toggle(() => editor.chain().focus().toggleHeading({ level: 1 }).run())}
-          >H1</Button>
+          >{t('s2.toolbar.h1')}</Button>
         </span></Tooltip>
 
-        <Tooltip title="H2"><span>
+        <Tooltip title={t('s2.toolbar.h2Tip')}><span>
           <Button
             size="small"
             startIcon={<LooksTwoIcon />}
             variant={editor?.isActive('heading', { level: 2 }) ? 'contained' : 'outlined'}
             onClick={() => editor && toggle(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}
-          >H2</Button>
+          >{t('s2.toolbar.h2')}</Button>
         </span></Tooltip>
 
-        <Tooltip title="Párrafo"><span>
+        <Tooltip title={t('s2.toolbar.bodyTip')}><span>
           <Button
             size="small"
             startIcon={<TitleIcon />}
             variant={editor?.isActive('paragraph') ? 'contained' : 'outlined'}
             onClick={() => editor && toggle(() => editor.chain().focus().setParagraph().run())}
-          >Body</Button>
+          >{t('s2.toolbar.body')}</Button>
         </span></Tooltip>
 
         <Box sx={{ width: 8 }} />
 
-        <Tooltip title="Negrita (Ctrl/Cmd+B)"><span>
+        <Tooltip title={t('s2.toolbar.boldTip')}><span>
           <Button
             size="small"
             startIcon={<FormatBoldIcon />}
             variant={editor?.isActive('bold') ? 'contained' : 'outlined'}
             onClick={() => editor && toggle(() => editor.chain().focus().toggleBold().run())}
-          >B</Button>
+          >{t('s2.toolbar.bold')}</Button>
         </span></Tooltip>
 
-        <Tooltip title="Cursiva (Ctrl/Cmd+I)"><span>
+        <Tooltip title={t('s2.toolbar.italicTip')}><span>
           <Button
             size="small"
             startIcon={<FormatItalicIcon />}
             variant={editor?.isActive('italic') ? 'contained' : 'outlined'}
             onClick={() => editor && toggle(() => editor.chain().focus().toggleItalic().run())}
-          ><i>I</i></Button>
+          ><i>{t('s2.toolbar.italic')}</i></Button>
         </span></Tooltip>
 
-        <Tooltip title="Subrayado (Ctrl/Cmd+U)"><span>
+        <Tooltip title={t('s2.toolbar.underlineTip')}><span>
           <Button
             size="small"
             startIcon={<FormatUnderlinedIcon />}
             variant={editor?.isActive('underline') ? 'contained' : 'outlined'}
             onClick={() => editor && toggle(() => editor.chain().focus().toggleUnderline().run())}
-          ><u>U</u></Button>
+          ><u>{t('s2.toolbar.underline')}</u></Button>
         </span></Tooltip>
 
         <Box sx={{ flexGrow: 1 }} />
 
         <Button onClick={saveMarkdown} disabled={!editor || saving}>
-          {saving ? 'Guardando…' : 'Guardar (Markdown)'}
+          {saving ? t('s2.saving') : t('s2.saveMarkdown')}
         </Button>
       </Stack>
 
@@ -278,7 +262,7 @@ La **Crisi** condueix al **Clímax**. El final mostra la nova normalitat i el ca
 
       {/* Modal de ayuda */}
       <Dialog open={helpOpen} onClose={()=>setHelpOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Cómo escribir un tratamiento</DialogTitle>
+        <DialogTitle>{t('s2.help.title')}</DialogTitle>
         <DialogContent dividers sx={{ maxHeight: '80vh', overflowY: 'auto' }}>
           <Box className="markdown-body">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -287,7 +271,7 @@ La **Crisi** condueix al **Clímax**. El final mostra la nova normalitat i el ca
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>setHelpOpen(false)}>Cerrar</Button>
+          <Button onClick={()=>setHelpOpen(false)}>{t('common.close')}</Button>
         </DialogActions>
       </Dialog>
     </Paper>

@@ -21,6 +21,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 import { useScreenplay } from '../../../state/screenplayStore';
+import { useT } from '../../../i18n';
 import type {
   Scene, ScenePlaceType, TimeOfDay, PlotPointKey, Character, Location, Subplot
 } from '../../../types';
@@ -87,28 +88,35 @@ const PLACE_TYPES: { value: ScenePlaceType; label: string }[] = [
   { value: 'NA',  label: 'N/A' }
 ];
 
-const TIMES: { value: TimeOfDay; label: string }[] = [
-  { value: 'DAY', label: 'DÍA' },
-  { value: 'NIGHT', label: 'NOCHE' },
-  { value: 'OTHER', label: 'OTRO' }
-];
-
-const PLOT_POINTS: { value: PlotPointKey; label: string }[] = [
-  { value: 'incidente',      label: 'Plot Point: Incidente' },
-  { value: 'momentoCambio',  label: 'Plot Point: Momento de Cambio' },
-  { value: 'puntoMedio',     label: 'Plot Point: Punto Medio / Ordalía' },
-  { value: 'crisis',         label: 'Plot Point: Crisis' },
-  { value: 'climax',         label: 'Plot Point: Clímax' }
-];
-
 const cornerColorRight = (tod: TimeOfDay) =>
   tod === 'DAY' ? '#FFD54F' : tod === 'NIGHT' ? '#64B5F6' : '#BDBDBD';
 const cornerColorLeft = (pt: ScenePlaceType) =>
   pt === 'INT' ? '#8E24AA' : pt === 'EXT' ? '#2E7D32' : '#757575';
 
+/** Etiqueta localizada para tiempo del día */
+function timeLabel(t: ReturnType<typeof useT>, value: TimeOfDay) {
+  if (value === 'DAY') return t('s7.time.day');
+  if (value === 'NIGHT') return t('s7.time.night');
+  return t('s7.time.other');
+}
+
+/** Etiqueta localizada para plot points */
+function ppLabel(t: ReturnType<typeof useT>, value?: PlotPointKey) {
+  if (!value) return '';
+  switch (value) {
+    case 'incidente': return t('s7.pp.label.incidente');
+    case 'momentoCambio': return t('s7.pp.label.momentoCambio');
+    case 'puntoMedio': return t('s7.pp.label.puntoMedio');
+    case 'crisis': return t('s7.pp.label.crisis');
+    case 'climax': return t('s7.pp.label.climax');
+    default: return '';
+  }
+}
+
 /* ───────── Componente principal ───────── */
 
 export default function S7AllScenesEditor() {
+  const t = useT();
   const { screenplay, patch } = useScreenplay();
 
   // Sanitiza escenas antiguas
@@ -193,19 +201,34 @@ export default function S7AllScenesEditor() {
   const removeScene = (id: string) =>
     patch({ scenes: (screenplay?.scenes ?? []).filter(x => x.id !== id) });
 
+  // Opciones localizadas para selects
+  const timeOptions = useMemo(() => ([
+    { value: 'DAY', label: t('s7.time.day') },
+    { value: 'NIGHT', label: t('s7.time.night') },
+    { value: 'OTHER', label: t('s7.time.other') }
+  ] satisfies { value: TimeOfDay; label: string }[]), [t]);
+
+  const ppOptions = useMemo(() => ([
+    { value: 'incidente', label: t('s7.pp.label.incidente') },
+    { value: 'momentoCambio', label: t('s7.pp.label.momentoCambio') },
+    { value: 'puntoMedio', label: t('s7.pp.label.puntoMedio') },
+    { value: 'crisis', label: t('s7.pp.label.crisis') },
+    { value: 'climax', label: t('s7.pp.label.climax') }
+  ] satisfies { value: PlotPointKey; label: string }[]), [t]);
+
   return (
     <Box>
       {/* Header: título + acciones + buscador */}
       <Stack spacing={1.25} sx={{ mb: 2 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>S7 — Escenas</Typography>
-          <Button startIcon={<AddIcon />} onClick={addScene}>Añadir escena</Button>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>{t('s7.title')}</Typography>
+          <Button startIcon={<AddIcon />} onClick={addScene}>{t('s7.add')}</Button>
         </Stack>
 
         <TextField
           size="small"
-          label="Buscar"
-          placeholder="Localización, personaje, plot point…"
+          label={t('s7.search.label')}
+          placeholder={t('s7.search.placeholder')}
           value={q}
           onChange={(e)=>setQ(e.target.value)}
           InputProps={{
@@ -225,7 +248,10 @@ export default function S7AllScenesEditor() {
         />
         {q && (
           <Typography variant="caption" sx={{ opacity:.7 }}>
-            {filtered.length} resultado{filtered.length===1?'':'s'} · el reordenado está desactivado mientras hay búsqueda
+            {q && (filtered.length === 1
+              ? t('s7.search.one')
+              : t('s7.search.many', { n: String(filtered.length) })
+            )}
           </Typography>
         )}
       </Stack>
@@ -287,6 +313,8 @@ export default function S7AllScenesEditor() {
             });
             setEditing(null);
           }}
+          timeOptions={timeOptions}
+          ppOptions={ppOptions}
         />
       )}
     </Box>
@@ -305,6 +333,7 @@ function SortableSceneCard(props: {
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const t = useT();
   const { id, disabled, sceneNumber, scene, subplot, chars, onEdit, onDelete } = props;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled });
 
@@ -316,13 +345,13 @@ function SortableSceneCard(props: {
 
   const leftColor = cornerColorLeft(scene.placeType);
   const rightColor = cornerColorRight(scene.timeOfDay);
-  const todLabel = scene.timeOfDay === 'DAY' ? 'DÍA' : scene.timeOfDay === 'NIGHT' ? 'NOCHE' : 'OTRO';
-  const ppLabel = scene.plotPoint ? PLOT_POINTS.find(p => p.value === scene.plotPoint)?.label : null;
+  const todText = timeLabel(t, scene.timeOfDay);
+  const plotPointText = ppLabel(t, scene.plotPoint);
 
   return (
     <div ref={setNodeRef} style={style}>
       <Paper variant="outlined" sx={{ p: 1.5, position: 'relative', overflow: 'hidden', width: '100%' }}>
-        {/* Esquinas INT/EXT y DÍA/NOCHE */}
+        {/* Esquinas INT/EXT y DÍA/NOCHE/OTRO */}
         <Box sx={{
           position: 'absolute', top: 0, left: 0, width: 0, height: 0,
           borderTop: `46px solid ${leftColor}`, borderRight: '46px solid transparent', zIndex: 1
@@ -335,7 +364,7 @@ function SortableSceneCard(props: {
           borderTop: `46px solid ${rightColor}`, borderLeft: '46px solid transparent', zIndex: 1
         }} />
         <Typography variant="caption" sx={{ position: 'absolute', top: 2, right: 4, zIndex: 2, color: '#fff', fontWeight: 700 }}>
-          {todLabel}
+          {todText}
         </Typography>
 
         {/* Header: Nº de escena + Localización centrada + acciones + handle */}
@@ -349,13 +378,13 @@ function SortableSceneCard(props: {
             >
               {scene.locationName || '—'}
             </Typography>
-            {ppLabel && (
+            {scene.plotPoint && (
               <Typography variant="caption" sx={{ opacity: .8 }}>
-                {ppLabel}
+                {plotPointText}
               </Typography>
             )}
           </Box>
-          <Tooltip title={disabled ? 'Reordenado desactivado durante la búsqueda' : 'Arrastra para reordenar'}>
+          <Tooltip title={disabled ? t('s7.tip.reorderDisabled') : t('s7.tip.reorder')}>
             <span>
               <IconButton
                 size="small"
@@ -368,22 +397,22 @@ function SortableSceneCard(props: {
               </IconButton>
             </span>
           </Tooltip>
-          <Tooltip title="Editar">
+          <Tooltip title={t('s7.tip.edit')}>
             <IconButton size="small" onClick={onEdit}><EditIcon fontSize="small" /></IconButton>
           </Tooltip>
-          <Tooltip title="Eliminar">
+          <Tooltip title={t('s7.tip.delete')}>
             <IconButton size="small" onClick={onDelete} color="error"><DeleteOutlineIcon fontSize="small" /></IconButton>
           </Tooltip>
         </Stack>
 
         {/* Body */}
         <Box sx={{ mb: 1 }}>
-          <Typography variant="caption" sx={{ fontWeight: 600, opacity: .75 }}>Descripción</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 600, opacity: .75 }}>{t('s7.fields.description')}</Typography>
           <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', mb: .75 }}>
             {scene.description || '—'}
           </Typography>
 
-          <Typography variant="caption" sx={{ fontWeight: 600, opacity: .75 }}>Función</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 600, opacity: .75 }}>{t('s7.fields.function')}</Typography>
           <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
             {scene.purpose || '—'}
           </Typography>
@@ -391,12 +420,12 @@ function SortableSceneCard(props: {
 
         {/* Footer */}
         <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap' }}>
-          <Chip size="small" variant="outlined" label={`Trama: ${subplot?.name ?? '—'}`} />
+          <Chip size="small" variant="outlined" label={`${t('s7.footer.subplot')}: ${subplot?.name ?? '—'}`} />
           <Stack direction="row" spacing={.5} useFlexGap flexWrap="wrap">
             {chars.length ? (
               chars.map(c => <Chip key={c.id} size="small" label={c.name || '¿?'} />)
             ) : (
-              <Typography variant="body2" sx={{ ml: .5, opacity: .7 }}>Sin personajes</Typography>
+              <Typography variant="body2" sx={{ ml: .5, opacity: .7 }}>{t('s7.footer.noCharacters')}</Typography>
             )}
           </Stack>
         </Stack>
@@ -408,7 +437,8 @@ function SortableSceneCard(props: {
 /* ───────── Modal de edición ───────── */
 
 function SceneEditDialog({
-  open, value, allLocations, allSubplots, allCharacters, onCancel, onSave
+  open, value, allLocations, allSubplots, allCharacters, onCancel, onSave,
+  timeOptions, ppOptions
 }: {
   open: boolean;
   value: Scene;
@@ -417,7 +447,10 @@ function SceneEditDialog({
   allCharacters: Character[];
   onCancel: () => void;
   onSave: (next: Scene) => void;
+  timeOptions: { value: TimeOfDay; label: string }[];
+  ppOptions: { value: PlotPointKey; label: string }[];
 }) {
+  const t = useT();
   const [draft, setDraft] = useState<Scene>(value);
 
   const locationOptions = useMemo(() => (allLocations ?? []).map(l => l.name), [allLocations]);
@@ -432,7 +465,7 @@ function SceneEditDialog({
 
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="md" fullWidth>
-      <DialogTitle>Editar escena</DialogTitle>
+      <DialogTitle>{t('s7.dialog.title')}</DialogTitle>
       <DialogContent dividers sx={{ maxHeight: '80vh' }}>
         <Stack spacing={2} sx={{ mt: .5 }}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
@@ -442,12 +475,12 @@ function SceneEditDialog({
               value={draft.locationName || ''}
               onChange={(_, v) => setDraft({ ...draft, locationName: (v as string) || '' })}
               onInputChange={(_, v) => setDraft({ ...draft, locationName: v || '' })}
-              renderInput={(p) => <TextField {...p} label="Localización" placeholder="Ej.: CAFÉ DE RICK" fullWidth />}
+              renderInput={(p) => <TextField {...p} label={t('s7.dialog.location')} placeholder={t('s7.dialog.locationPh')} fullWidth />}
               sx={{ flex: 1 }}
             />
 
             <TextField
-              select label="INT/EXT" value={draft.placeType}
+              select label={t('s7.dialog.placeType')} value={draft.placeType}
               onChange={(e) => setDraft({ ...draft, placeType: e.target.value as ScenePlaceType })}
               sx={{ minWidth: 120 }}
             >
@@ -455,47 +488,47 @@ function SceneEditDialog({
             </TextField>
 
             <TextField
-              select label="Tiempo" value={draft.timeOfDay}
+              select label={t('s7.dialog.time')} value={draft.timeOfDay}
               onChange={(e) => setDraft({ ...draft, timeOfDay: e.target.value as TimeOfDay })}
               sx={{ minWidth: 130 }}
             >
-              {TIMES.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+              {timeOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
             </TextField>
           </Stack>
 
           <TextField
             select
-            label="Plot Point (opcional)"
+            label={t('s7.dialog.pp')}
             value={draft.plotPoint ?? ''}
             onChange={(e) => setDraft({ ...draft, plotPoint: (e.target.value || undefined) as PlotPointKey | undefined })}
-            helperText="Marca solo si esta escena es un punto de giro."
+            helperText={t('s7.dialog.ppHelp')}
           >
-            <MenuItem value="">—</MenuItem>
-            {PLOT_POINTS.map(p => <MenuItem key={p.value} value={p.value}>{p.label}</MenuItem>)}
+            <MenuItem value="">{t('s7.common.none')}</MenuItem>
+            {ppOptions.map(p => <MenuItem key={p.value} value={p.value}>{p.label}</MenuItem>)}
           </TextField>
 
           <TextField
-            label="Descripción de la escena"
+            label={t('s7.dialog.desc')}
             value={draft.description}
             onChange={(e) => setDraft({ ...draft, description: e.target.value })}
             multiline minRows={3} fullWidth
           />
           <TextField
-            label="Función de la escena"
+            label={t('s7.dialog.purpose')}
             value={draft.purpose}
             onChange={(e) => setDraft({ ...draft, purpose: e.target.value })}
-            placeholder="Presentar personajes, tensar conflicto, alivio cómico…"
+            placeholder={t('s7.dialog.purposePh')}
             fullWidth
           />
 
           <TextField
             select
-            label="Trama (opcional)"
+            label={t('s7.dialog.subplot')}
             value={draft.subplotId ?? ''}
             onChange={(e) => setDraft({ ...draft, subplotId: (e.target.value || null) as string | null })}
-            helperText="Vincula esta escena a una subtrama si corresponde."
+            helperText={t('s7.dialog.subplotHelp')}
           >
-            <MenuItem value="">—</MenuItem>
+            <MenuItem value="">{t('s7.common.none')}</MenuItem>
             {subplotOptions.map(s => <MenuItem key={s.id} value={s.id}>{s.label}</MenuItem>)}
           </TextField>
 
@@ -505,17 +538,17 @@ function SceneEditDialog({
             options={characterOptions.map(o => o.label)}
             value={charNames}
             onChange={(_, v) => setCharNames(v as string[])}
-            renderInput={(p) => <TextField {...p} label="Personajes en la escena" placeholder="Escribe y pulsa Enter…" />}
+            renderInput={(p) => <TextField {...p} label={t('s7.dialog.characters')} placeholder={t('s7.dialog.charactersPh')} />}
           />
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>Cancelar</Button>
+        <Button onClick={onCancel}>{t('common.cancel')}</Button>
         <Button
           variant="contained"
           onClick={() => onSave({ ...draft, characterIds: charNames as any })}
         >
-          Guardar
+          {t('common.save')}
         </Button>
       </DialogActions>
     </Dialog>

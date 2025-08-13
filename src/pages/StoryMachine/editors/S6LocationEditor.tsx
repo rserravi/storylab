@@ -147,14 +147,14 @@ export default function S6LocationsEditor() {
       {/* Header */}
       <Stack spacing={1.25} sx={{ mb: 2 }}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>{t('s6.title', 'S6 — Localizaciones')}</Typography>
-          <Button startIcon={<AddIcon/>} onClick={addLocation}>{t('s6.add', 'Añadir localización')}</Button>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>{t('s6.title')}</Typography>
+          <Button startIcon={<AddIcon/>} onClick={addLocation}>{t('s6.add')}</Button>
         </Stack>
 
         {/* Filtro por etiquetas */}
         <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
           <Chip
-            label={activeTags.length ? t('s6.filter.clear', 'Limpiar filtros') : t('s6.filter.byTags', 'Filtrar por etiquetas')}
+            label={activeTags.length ? t('s6.filter.clear') : t('s6.filter.byTags')}
             onClick={() => setActiveTags([])}
             color={activeTags.length ? 'primary' : 'default'}
             variant={activeTags.length ? 'filled' : 'outlined'}
@@ -181,7 +181,7 @@ export default function S6LocationsEditor() {
 
         {activeTags.length > 0 && (
           <Typography variant="caption" sx={{ opacity:.7 }}>
-            {filtered.length} resultado{filtered.length===1?'':'s'} · {t('s6.filter.active', 'filtro activo')}
+            {filtered.length} resultado{filtered.length===1?'':'s'} · {t('s6.filter.active')}
           </Typography>
         )}
       </Stack>
