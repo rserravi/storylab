@@ -22,6 +22,7 @@ export function createEmpty(): Character {
   return {
     id: crypto.randomUUID(),
     name: '',
+    image: '',
     archetypes: [],
     nature: [],
     attitude: [],
@@ -54,6 +55,7 @@ export function normalizeDraft(d: Character): Character {
   return {
     ...d,
     name: (d.name || '').trim(),
+    image: (d.image || '').trim(),
     archetypes: dedupeStrings(d.archetypes),
     nature: dedupeStrings(d.nature),
     attitude: dedupeStrings(d.attitude),

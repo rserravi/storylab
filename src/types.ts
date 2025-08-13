@@ -70,6 +70,7 @@ export type CharacterRelation = {
 export type Character = {
   id: string;
   name: string;
+  image?: string;             // Imagen asociada (URL)
   archetypes: string[];        // Arquetipos (Vogler) — múltiple, pueden cambiar a lo largo de la historia
   nature: string[];            // Naturaleza (listas de adjetivos; múltiple)
   attitude: string[];          // Actitud (listas de adjetivos; múltiple)
