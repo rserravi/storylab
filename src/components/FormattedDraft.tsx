@@ -67,8 +67,8 @@ export default function FormattedDraft({ screenplay }: Props) {
   return (
     <div className="script-sheet">
       <div className="script-content">
-        {(screenplay.scenes || [])
-          .sort((a,b)=>a.number-b.number)
+        {[...(screenplay.scenes || [])]
+          .sort((a, b) => a.number - b.number)
           .map((sc) => (
             <div key={sc.id}>
               <div className="scene-heading">{sc.slugline || 'INT./EXT. TBD - DAY'}</div>
