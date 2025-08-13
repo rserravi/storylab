@@ -102,6 +102,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   }
   if (line) lines.push(line);
   return lines;
+
 }
 
 /* ───────────────── componente principal ───────────────── */
@@ -650,7 +651,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
         <Button onClick={()=>onSave(normalizeDraft(draft))} variant="contained">{t('s4.modal.save')}</Button>
       </DialogActions>
     </Dialog>
-    <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpen(false)} maxWidth="sm" fullWidth>
+    <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpe(false)} maxWidth="sm" fullWidth>
       <DialogTitle>{t('s6.ai.title')}</DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} sx={{ mt: .5 }}>

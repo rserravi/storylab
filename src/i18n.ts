@@ -130,7 +130,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.delete': 'Eliminar',
     's4.noname': 'Sin nombre',
 
-    's4.card.archetypes': 'Arquetipos (Vogler)',
+    's4.card.archetypes': 'Arquetipos',
     's4.card.nature': 'Naturaleza',
     's4.card.attitude': 'Actitud',
     's4.card.need.global': 'Necesidad dramática — Global',
@@ -158,8 +158,8 @@ const dict: Record<Locale, Record<string, string>> = {
 
     's4.modal.title': 'Editar personaje',
     's4.modal.name': 'Nombre',
-    's4.modal.archetypes': 'Arquetipos (Vogler)',
-    's4.modal.nature': 'Naturaleza (adjetivos)',
+    's4.modal.archetypes': 'Arquetipos',
+    's4.modal.nature': 'Naturaleza (cómo realmente es)',
     's4.modal.attitude': 'Actitud (cómo se muestra)',
     's4.modal.nature.placeholder': 'parco, generoso, misterioso…',
     's4.modal.attitude.placeholder': 'fanfarrón, cortés, valiente…',
@@ -463,7 +463,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.delete': 'Delete',
     's4.noname': 'No name',
 
-    's4.card.archetypes': 'Archetypes (Vogler)',
+    's4.card.archetypes': 'Archetypes',
     's4.card.nature': 'Nature',
     's4.card.attitude': 'Attitude',
     's4.card.need.global': 'Dramatic need — Global',
@@ -490,8 +490,8 @@ const dict: Record<Locale, Record<string, string>> = {
 
     's4.modal.title': 'Edit character',
     's4.modal.name': 'Name',
-    's4.modal.archetypes': 'Archetypes (Vogler)',
-    's4.modal.nature': 'Nature (adjectives)',
+    's4.modal.archetypes': 'Archetypes',
+    's4.modal.nature': 'Nature (how they really are)',
     's4.modal.attitude': 'Attitude (how they present)',
     's4.modal.nature.placeholder': 'terse, generous, mysterious…',
     's4.modal.attitude.placeholder': 'boastful, courteous, brave…',
@@ -788,7 +788,7 @@ const dict: Record<Locale, Record<string, string>> = {
     's4.delete': 'Eliminar',
     's4.noname': 'Sense nom',
 
-    's4.card.archetypes': 'Arquetips (Vogler)',
+    's4.card.archetypes': 'Arquetips',
     's4.card.nature': 'Naturalesa',
     's4.card.attitude': 'Actitud',
     's4.card.need.global': 'Necessitat dramàtica — Global',
@@ -816,8 +816,8 @@ const dict: Record<Locale, Record<string, string>> = {
 
     's4.modal.title': 'Editar personatge',
     's4.modal.name': 'Nom',
-    's4.modal.archetypes': 'Arquetips (Vogler)',
-    's4.modal.nature': 'Naturalesa (adjectius)',
+    's4.modal.archetypes': 'Arquetips',
+    's4.modal.nature': 'Naturalesa (com realment és)',
     's4.modal.attitude': 'Actitud (com es mostra)',
     's4.modal.nature.placeholder': 'parc, generós, misteriós…',
     's4.modal.attitude.placeholder': 'fanfarró, cortès, valent…',
