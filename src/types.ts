@@ -80,6 +80,9 @@ export type Character = {
   needH1: string;              // Necesidades dramáticas 1ª mitad (hasta la Ordalía)
   needH2: string;              // Necesidades dramáticas 2ª mitad (tras la Ordalía)
   arc: string;                // Arco (evolución)
+  conflictInternal?: string;  // Conflicto interno
+  conflictPersonal?: string;  // Conflicto personal
+  conflictExtrapersonal?: string; // Conflicto extrapersonal
   conflictLevel: ConflictLevel;// Conflicto (McKee)
   conflictDesc: string;       // Descripción del conflicto
   relations: CharacterRelation[];  // Relaciones con otros personajes

@@ -23,7 +23,6 @@ import { useTraitSuggestions } from '../../../data/traits';
 import { useT, useTx } from '../../../i18n';
 import {
   ARCH_CODE,
-  CONFLICT_CODE,
   createEmpty,
   dedupeStrings,
   filterOptions,
@@ -37,15 +36,6 @@ function archLabel(value: string, t:(k:string)=>string) {
   const key = `arch.${value}`;
   const label = t(key);
   return label === key ? value : label;
-}
-function conflictLabel(value: string, t:(k:string)=>string) {
-  const code = CONFLICT_CODE[value]; return code ? t(`s4.conflict.level.${code}`) : value;
-}
-function conflictChipColor(level: string): 'default'|'info'|'warning'|'error' {
-  if (level === 'Interno') return 'info';
-  if (level === 'Personal') return 'warning';
-  if (level === 'Extrapersonal') return 'error';
-  return 'default';
 }
 /* ───────────────── componente principal ───────────────── */
 
@@ -90,6 +80,7 @@ export default function S4CharactersEditor() {
       if (c.attitude?.some(a => matches(a))) return true;
       if (matches(c.conflictLevel)) return true;
       if (matches(c.conflictDesc)) return true;
+      if (matches(c.conflictInternal) || matches(c.conflictPersonal) || matches(c.conflictExtrapersonal)) return true;
       if (matches(c.arc)) return true;
       if (matches(c.needGlobal) || matches(c.needH1) || matches(c.needH2)) return true;
       if (matches(c.biography) || matches(c.voice) || matches(c.paradoxes)) return true;
@@ -301,18 +292,31 @@ export default function S4CharactersEditor() {
         </Typography>
       </Box>
 
+      {/* Conflictos (resumen) */}
+      <Box sx={{ mb: .5 }}>
+        <Typography variant="caption" sx={{ display:'block', mb:.25, fontWeight:600, opacity:.8 }}>
+          {t('s4.card.conflict')}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
+          }}
+          title={[
+            `${t('s4.card.conflict.internal')}: ${c.conflictInternal || '—'}`,
+            `${t('s4.card.conflict.personal')}: ${c.conflictPersonal || '—'}`,
+            `${t('s4.card.conflict.extrapersonal')}: ${c.conflictExtrapersonal || '—'}`
+          ].join('\n')}
+        >
+          • {t('s4.card.conflict.internal')}: {c.conflictInternal || '—'} · {t('s4.card.conflict.personal')}: {c.conflictPersonal || '—'} · {t('s4.card.conflict.extrapersonal')}: {c.conflictExtrapersonal || '—'}
+        </Typography>
+      </Box>
+
       <Divider sx={{ my: 1 }} />
 
-      {/* Footer: Conflicto + Relaciones (popover) + Voz + Bio (popover) */}
+      {/* Footer: Relaciones (popover) + Voz + Bio (popover) */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ flexWrap:'wrap' }}>
-        <Chip
-          size="small"
-          variant="outlined"
-          color={conflictChipColor(c.conflictLevel)}
-          label={`${t('s4.card.conflict')}: ${c.conflictLevel ? conflictLabel(c.conflictLevel, t) : '—'}`}
-          sx={{ mr: .5 }}
-        />
-
         {/* Relaciones (conteo + popover) */}
         <Tooltip title={t('s4.card.relations')}>
           <span>
