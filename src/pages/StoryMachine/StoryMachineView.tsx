@@ -1,4 +1,4 @@
-import { Box, Paper, Tabs, Tab, Typography, TextField } from '@mui/material';
+import { Box, Paper, Tabs, Tab, TextField, Stack } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useProjects } from '../../state/projectStore';
 import { useScreenplay } from '../../state/screenplayStore';
@@ -16,7 +16,7 @@ const STEPS = ['S1 Sinopsis','S3 Puntos giro','S2 Tratamiento','S4 Personajes','
 export default function StoryMachineView() {
   const [tab, setTab] = useState(0);
   const { activeProjectId } = useProjects();
-  const { screenplay, load, setTitle } = useScreenplay();
+  const { screenplay, load, setTitle, setAuthor } = useScreenplay();
 
   useEffect(() => { if (activeProjectId) load(activeProjectId); }, [activeProjectId]);
 
@@ -29,11 +29,20 @@ export default function StoryMachineView() {
       </Paper>
 
       <Paper sx={{ p:2, mb:2 }}>
-        <Typography variant="h6">Proyecto: {screenplay?.title || 'Cargando...'}</Typography>
-        <TextField
-          label="Título del guion" value={screenplay?.title || ''}
-          onChange={(e)=>setTitle(e.target.value)} sx={{ mt:1, maxWidth: 420 }}
-        />
+        <Stack direction="row" spacing={2}>
+          <TextField
+            label="Título del guion"
+            value={screenplay?.title || ''}
+            onChange={(e) => setTitle(e.target.value)}
+            sx={{ flexGrow: 1 }}
+          />
+          <TextField
+            label="Autor"
+            value={screenplay?.author || ''}
+            onChange={(e) => setAuthor(e.target.value)}
+            sx={{ width: 250 }}
+          />
+        </Stack>
       </Paper>
 
       {/* Editores por paso */}

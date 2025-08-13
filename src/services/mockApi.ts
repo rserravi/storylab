@@ -50,8 +50,11 @@ export const mockScreenplays = {
     const all = read<any[]>(LS.screenplays, []);
     let s = all.find(x => x.projectId === projectId);
     if (!s) {
-      s = { id: uuid(), projectId, title: 'Nuevo Guion', scenes: [] };
+      s = { id: uuid(), projectId, title: 'Nuevo Guion', author: '', scenes: [] };
       all.push(s); write(LS.screenplays, all);
+    } else if (!('author' in s)) {
+      s.author = '';
+      write(LS.screenplays, all);
     }
     return s;
   },

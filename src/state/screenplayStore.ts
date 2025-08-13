@@ -6,8 +6,9 @@ type SPState = {
   screenplay: Screenplay | null;
   load: (projectId: string) => Promise<void>;
   setTitle: (title: string) => void;
+  setAuthor: (author: string) => void;
   upsertScene: (scene: Partial<Scene>) => void;
-  patch: (partial: Partial<Screenplay>) => void; 
+  patch: (partial: Partial<Screenplay>) => void;
   setSynopsis: (synopsis: string) => void;
   setIdeationRows: (rows: IdeaRow[]) => void;
   setDecidedRow: (id: string | null) => void;
@@ -23,6 +24,10 @@ export const useScreenplay = create<SPState>((set, get) => ({
   },
   setTitle: (title) => {
     const sp = { ...get().screenplay!, title };
+    mockScreenplays.update(sp); set({ screenplay: sp });
+  },
+  setAuthor: (author) => {
+    const sp = { ...get().screenplay!, author };
     mockScreenplays.update(sp); set({ screenplay: sp });
   },
   upsertScene: (scene) => {
