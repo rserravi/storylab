@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/hollywood.css';
-import type { Screenplay } from '../types';
+import type { Screenplay, Scene } from '../types';
 
 type Props = { screenplay: Screenplay };
 
@@ -64,11 +64,13 @@ function parseSynopsisToBlocks(s: string): El[] {
 
 export default function FormattedDraft({ screenplay }: Props) {
   // (Paginación real vendrá después; ahora es una única “sheet” larga)
+  const scenes = (screenplay.scenes || []) as Scene[];
   return (
     <div className="script-sheet">
       <div className="script-content">
-        {[...(screenplay.scenes || [])]
-          .sort((a, b) => a.number - b.number)
+        {scenes
+          .sort((a,b)=>a.number-b.number)
+
           .map((sc) => (
             <div key={sc.id}>
               <div className="scene-heading">{sc.slugline || 'INT./EXT. TBD - DAY'}</div>

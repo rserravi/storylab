@@ -29,15 +29,23 @@ export const useScreenplay = create<SPState>((set, get) => ({
     const sp = get().screenplay!;
     const scenes = [...(sp.scenes||[])];
     const idx = scenes.findIndex(s => s.id === scene.id);
-    const merged = {
+    const merged: Scene = {
       id: scene.id || crypto.randomUUID(),
       number: scene.number ?? scenes.length + 1,
       slugline: scene.slugline || 'INT. TBD - DAY',
       characters: scene.characters || [],
       synopsis: scene.synopsis || '',
-      isKey: !!scene.isKey
+      isKey: !!scene.isKey,
+      locationName: scene.locationName || '',
+      placeType: scene.placeType || 'INT',
+      timeOfDay: scene.timeOfDay || 'DAY',
+      plotPoint: scene.plotPoint,
+      description: scene.description || '',
+      purpose: scene.purpose || '',
+      subplotId: scene.subplotId ?? null,
+      characterIds: scene.characterIds || []
     };
-    if (idx >= 0) scenes[idx] = { ...scenes[idx], ...merged }; else scenes.push(merged as any);
+    if (idx >= 0) scenes[idx] = { ...scenes[idx], ...merged }; else scenes.push(merged);
     const next = { ...sp, scenes };
     mockScreenplays.update(next); set({ screenplay: next });
   },

@@ -6,6 +6,16 @@ export type ConflictLevel = 'Extrapersonal' | 'Personal' | 'Interno';
 
 export type Scene = {
   id: string;
+  /** Número de escena dentro del guion */
+  number: number;
+  /** Encabezado de la escena en formato slugline */
+  slugline: string;
+  /** Personajes mencionados en la escena (nombres libres) */
+  characters: string[];
+  /** Sinopsis o contenido en formato texto simple */
+  synopsis: string;
+  /** Marca si la escena es clave dentro de la historia */
+  isKey?: boolean;
   locationName: string;        // guardamos el texto (índice por nombre)
   placeType: ScenePlaceType;   // INT / EXT / NA
   timeOfDay: TimeOfDay;        // DAY / NIGHT / OTHER
