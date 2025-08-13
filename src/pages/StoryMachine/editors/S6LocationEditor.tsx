@@ -25,10 +25,9 @@ import type {
   TimeOfDay,
   PlotPointKey
 } from '../../../types';
-import { useT } from '../../../i18n';
-import { useUi } from '../../../state/uiStore';
+import { useT, useTx } from '../../../i18n';
 import { LOCATION_TAGS } from '../../../data/locationTags';
-import { AI_STYLES, type AIStyle } from '../../../data/aiStyles';
+
 import { SceneEditDialog } from './S7AllScenesEditor';
 
 /** Extensión local de Location para S6 (retro-compatible) */
@@ -105,6 +104,7 @@ function ensureCharacters(characters: Character[] | undefined, names: string[] |
 
 export default function S6LocationsEditor() {
   const t = useT();
+  const tx = useTx();
   const { screenplay, patch } = useScreenplay();
 
   // Normaliza a nuestro shape extendido
@@ -251,7 +251,7 @@ export default function S6LocationsEditor() {
 
         {activeTags.length > 0 && (
           <Typography variant="caption" sx={{ opacity:.7 }}>
-            {filtered.length} {filtered.length===1 ? t('common.result.one') : t('common.result.other')} · {t('s6.filter.active')}
+            {tx('s6.filter.count', { n: String(filtered.length) })} · {t('s6.filter.active')}
           </Typography>
         )}
       </Stack>
@@ -336,13 +336,14 @@ function LocationCard({
         <Typography variant="subtitle1" sx={{ fontWeight: 700, flexGrow: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {loc.name || '—'}
         </Typography>
-        <Tooltip title={t('s6.tooltip.createSceneHere')}>
+        <Tooltip title={t('s6.card.createSceneHere')}>
           <IconButton size="small" onClick={onCreateSceneHere}><AddLocationAltIcon fontSize="small" /></IconButton>
         </Tooltip>
-        <Tooltip title={t('common.edit')}>
+        <Tooltip title={t('s6.card.edit')}>
           <IconButton size="small" onClick={onEdit}><EditIcon fontSize="small" /></IconButton>
         </Tooltip>
-        <Tooltip title={t('common.delete')}>
+        <Tooltip title={t('s6.card.delete')}>
+
           <IconButton size="small" onClick={onDelete} color="error"><DeleteOutlineIcon fontSize="small" /></IconButton>
         </Tooltip>
       </Stack>
@@ -351,7 +352,8 @@ function LocationCard({
       <Stack direction="row" spacing={.5} useFlexGap flexWrap="wrap" sx={{ mb: 1 }}>
         {(loc.tags ?? []).length
           ? (loc.tags ?? []).map(tag => <Chip key={tag} size="small" variant="outlined" label={tag} />)
-          : <Typography variant="body2" sx={{ opacity:.7 }}>{t('s6.tags.none')}</Typography>
+          : <Typography variant="body2" sx={{ opacity:.7 }}>{t('s6.card.noTags')}</Typography>
+
         }
       </Stack>
 
@@ -362,7 +364,8 @@ function LocationCard({
         </Box>
       ) : (
         <Box sx={{ mb: 1, borderRadius: 1, height: 140, bgcolor: 'action.hover', display:'flex', alignItems:'center', justifyContent:'center', fontSize: 12, opacity: .6 }}>
-          {t('s6.noImage')}
+          {t('s6.card.noImage')}
+
         </Box>
       )}
 
@@ -447,8 +450,8 @@ function LocationEditDialog({
 
   // Sugerencias de tags = existentes + catálogo base
   const tagOptions = useMemo(() => {
-    const base = LOCATION_TAGS[lang as 'es' | 'en' | 'ca'] || LOCATION_TAGS.es;
-    const set = new Set([ ...base, ...(allTags ?? []) ]);
+    const set = new Set([ ...LOCATION_TAGS, ...(allTags ?? []) ]);
+
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [allTags, lang]);
 
@@ -524,7 +527,8 @@ function LocationEditDialog({
               variant="outlined"
               onClick={()=> setAiOpen(true)}
             >
-              {t('s6.ai.button')}
+              {t('s6.ai.generateImage')}
+
             </Button>
 
             <Typography variant="caption" sx={{ opacity:.7 }}>
@@ -542,12 +546,14 @@ function LocationEditDialog({
                     title={img.name || ''}
                     actionIcon={
                       <Stack direction="row" spacing={0.5} sx={{ mr: 0.5 }}>
-                        <Tooltip title={t('s6.tooltip.setCover')}>
+                          <Tooltip title={t('s6.card.setCover')}>
+
                           <IconButton size="small" onClick={()=>setCover(img.id)} sx={{ color: 'white' }}>
                             {draft.images?.[0]?.id === img.id ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title={t('common.delete')}>
+                        <Tooltip title={t('s6.card.delete')}>
+
                           <IconButton size="small" onClick={()=>removeImage(img.id)} sx={{ color: 'white' }}>
                             <DeleteOutlineIcon fontSize="small" />
                           </IconButton>
@@ -564,29 +570,32 @@ function LocationEditDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>{t('common.cancel')}</Button>
-        <Button
-          variant="contained"
-          onClick={() => { if (validate()) onSave(normalizeDraft(draft)); }}
-        >
-          {t('common.save')}
-        </Button>
+          <Button
+            variant="contained"
+            onClick={() => { if (validate()) onSave(normalizeDraft(draft)); }}
+          >
+            {t('common.save')}
+          </Button>
+
       </DialogActions>
 
       {/* Modal para "Generar Imagen IA" (mock) */}
       <Dialog open={aiOpen} onClose={()=>!aiBusy && setAiOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{t('s6.ai.modalTitle')}</DialogTitle>
+        <DialogTitle>{t('s6.ai.title')}</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2} sx={{ mt: .5 }}>
             <TextField
-              label={t('s6.ai.prompt.label')}
+              label={t('s6.ai.prompt')}
               value={aiPrompt}
               onChange={(e)=>setAiPrompt(e.target.value)}
-              placeholder={t('s6.ai.prompt.placeholder')}
+              placeholder={t('s6.ai.promptPh')}
+
               multiline minRows={3}
               fullWidth
             />
             <TextField
-              label={t('s6.ai.style.label')}
+              label={t('s6.ai.style')}
+
               select
               value={aiStyle}
               onChange={(e)=>setAiStyle(e.target.value as AIStyle)}
