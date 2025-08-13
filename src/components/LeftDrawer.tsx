@@ -76,6 +76,7 @@ export default function LeftDrawer({ width, open, onClose }: { width: number; op
               </ListItemButton>
             ))}
             <Divider component="li" />
+            <ListSubheader component="div">{t('nav.otherSteps')}</ListSubheader>
             {OTHER_STEPS.map(({ key, path }) => (
               <ListItemButton
                 key={path}
