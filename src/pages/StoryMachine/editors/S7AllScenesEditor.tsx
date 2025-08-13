@@ -21,7 +21,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 import { useScreenplay } from '../../../state/screenplayStore';
-import { useT } from '../../../i18n';
+import { useT, useTx } from '../../../i18n';
 import type {
   Scene, ScenePlaceType, TimeOfDay, PlotPointKey, Character, Location, Subplot
 } from '../../../types';
@@ -122,6 +122,7 @@ function ppLabel(t: ReturnType<typeof useT>, value?: PlotPointKey) {
 
 export default function S7AllScenesEditor() {
   const t = useT();
+  const tx = useTx();
   const { screenplay, patch } = useScreenplay();
 
   // Sanitiza escenas antiguas
@@ -211,8 +212,6 @@ export default function S7AllScenesEditor() {
   };
 
   const addScene = () => patch({ scenes: [...scenes, createEmptyScene()] });
-  const updateScene = (id: string, s: Scene) =>
-    patch({ scenes: (screenplay?.scenes ?? []).map(x => x.id === id ? s : x) });
   const removeScene = (id: string) =>
     patch({ scenes: (screenplay?.scenes ?? []).filter(x => x.id !== id) });
 
@@ -263,10 +262,10 @@ export default function S7AllScenesEditor() {
         />
         {q && (
           <Typography variant="caption" sx={{ opacity:.7 }}>
-            {q && (filtered.length === 1
-              ? t('s7.search.one')
-              : t('s7.search.many', { n: String(filtered.length) })
-            )}
+              {q && (filtered.length === 1
+                ? t('s7.search.one')
+                : tx('s7.search.many', { n: String(filtered.length) })
+              )}
           </Typography>
         )}
       </Stack>

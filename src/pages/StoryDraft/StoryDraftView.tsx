@@ -18,6 +18,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder';
 import Paragraph from '@tiptap/extension-paragraph';
+import type { CommandProps } from '@tiptap/core';
 
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../../state/projectStore';
@@ -119,7 +120,7 @@ function getCurrentParagraphType(editor: any): BlockType {
 }
 function setCurrentParagraphType(editor: any, type: BlockType) {
   const pos = getCurrentParagraphPos(editor);
-  editor.commands.command(({ tr, state, dispatch }) => {
+  editor.commands.command(({ tr, state, dispatch }: CommandProps) => {
     const node = state.doc.nodeAt(pos);
     if (node && node.type.name === 'paragraph') {
       tr.setNodeMarkup(pos, node.type, { ...(node.attrs || {}), 'data-type': type });
@@ -134,7 +135,7 @@ function replaceCurrentLine(editor: any, newText: string, setType?: BlockType) {
   const { $from } = state.selection;
   const from = $from.start();
   const to = $from.end();
-  editor.commands.command(({ tr, dispatch }) => {
+  editor.commands.command(({ tr, dispatch }: CommandProps) => {
     tr.insertText(newText, from, to);
     if (dispatch) dispatch(tr);
     return true;
@@ -158,7 +159,7 @@ function cycleType(editor: any, dir: 1 | -1) {
   else setCurrentParagraphType(editor, next);
 }
 function annotateAllParagraphTypes(editor: any) {
-  editor.commands.command(({ tr, state, dispatch }) => {
+  editor.commands.command(({ tr, state, dispatch }: CommandProps) => {
     let lastType: BlockType | undefined;
     state.doc.descendants((node: any, pos: number) => {
       if (node.type?.name === 'paragraph') {
@@ -208,7 +209,6 @@ function ensureCharactersFromBlocks(blocks: ScriptBlock[], existing: Character[]
 /* ─────────────── Vista principal ─────────────── */
 
 export default function StoryDraftView() {
-  const t = useT();
   const navigate = useNavigate();
   const { activeProjectId } = useProjects();
   const { screenplay, load, patch } = useScreenplay();

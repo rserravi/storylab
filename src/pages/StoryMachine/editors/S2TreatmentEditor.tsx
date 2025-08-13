@@ -72,8 +72,8 @@ export default function S2TreatmentEditor() {
 
   // Cargar contenido inicial: si hay HTML lo usamos; si solo hay MD, lo convertimos a HTML
   const initialHtml = useMemo(() => {
-    const html = (screenplay as any)?.treatmentHtml as string | undefined;
-    const md = (screenplay as any)?.treatmentMd as string | undefined;
+    const html = screenplay?.treatmentHtml;
+    const md = screenplay?.treatmentMd;
     if (html && html.trim()) return html;
     if (md && md.trim()) return marked.parse(md);
     return '';
