@@ -10,6 +10,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import {
@@ -365,6 +366,10 @@ function SortableSceneCard(props: {
   const todText = timeLabel(t, scene.timeOfDay);
   const plotPointText = ppLabel(t, scene.plotPoint);
 
+  const handleAiPropose = () => {
+    // TODO: implement AI proposal
+  };
+
   return (
     <div ref={setNodeRef} style={style}>
       <Paper variant="outlined" sx={{ p: 1.5, position: 'relative', overflow: 'hidden', width: '100%' }}>
@@ -413,6 +418,11 @@ function SortableSceneCard(props: {
                 <DragIndicatorIcon fontSize="small" />
               </IconButton>
             </span>
+          </Tooltip>
+          <Tooltip title={t('s7.tip.aiPropose')}>
+            <IconButton size="small" onClick={handleAiPropose}>
+              <AutoAwesomeIcon fontSize="small" />
+            </IconButton>
           </Tooltip>
           <Tooltip title={t('s7.tip.edit')}>
             <IconButton size="small" onClick={onEdit}><EditIcon fontSize="small" /></IconButton>
