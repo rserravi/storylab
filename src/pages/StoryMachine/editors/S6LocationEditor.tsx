@@ -29,6 +29,8 @@ import { useT, useTx } from '../../../i18n';
 import { LOCATION_TAGS } from '../../../data/locationTags';
 
 import { SceneEditDialog } from './S7AllScenesEditor';
+import { AI_STYLES, type AIStyle } from '../../../data/aiStyles';
+import { useUi } from '../../../state/uiStore';
 
 /** Extensión local de Location para S6 (retro-compatible) */
 type LocationImage = { id: string; src: string; name?: string };

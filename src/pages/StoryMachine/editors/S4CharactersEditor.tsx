@@ -33,12 +33,6 @@ import {
 
 /* ───────────────── helpers de etiquetado i18n (guardamos códigos) ───────────────── */
 
-const CONFLICT_CODE: Record<string, 'extrapersonal'|'personal'|'internal'> = {
-  'Extrapersonal': 'extrapersonal',
-  'Personal': 'personal',
-  'Interno': 'internal'
-};
-
 function archLabel(value: string, t:(k:string)=>string) {
   const key = `arch.${value}`;
   const label = t(key);
@@ -61,7 +55,6 @@ export default function S4CharactersEditor() {
   const traitSuggestions = useTraitSuggestions();
   const { screenplay, patch } = useScreenplay();
   const characters = screenplay?.characters ?? [];
-  const traitSuggestions = useTraitSuggestions();
 
   const [editing, setEditing] = useState<Character | null>(null);
 
@@ -457,7 +450,7 @@ function EditCharacterDialog({ open, value, allCharacters, onCancel, onSave }: E
           <Autocomplete
             multiple
             freeSolo
-            options={traitSuggestions as unknown as string[]}
+            options={useTraitSuggestions as unknown as string[]}
             filterOptions={filterOptions}
             value={draft.attitude}
             onChange={(_, v) => set({ attitude: dedupeStrings(v as string[]) })}
