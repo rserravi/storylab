@@ -9,4 +9,5 @@ const MAP: Record<Locale, readonly string[]> = { es: ES, en: EN, ca: CA };
 export function useTraitSuggestions() {
   const { lang } = useUi();
   return MAP[lang as Locale];
+
 }
