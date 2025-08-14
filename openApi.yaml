@@ -1,0 +1,593 @@
+openapi: 3.1.0
+info:
+  title: StoryLab API
+  version: 0.1.0
+  description: Backend that replaces all frontend mocks (auth, persistence and AI helpers).
+
+servers:
+  - url: https://api.storylab.example
+
+tags:
+  - name: Auth
+  - name: Projects
+  - name: Screenplays
+  - name: AI
+  - name: Media
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      required: [id, email, name]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        name: { type: string }
+    AuthToken:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string, description: JWT access token }
+        user: { $ref: '#/components/schemas/User' }
+    Project:
+      type: object
+      required: [id, name, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        createdAt: { type: string, format: date-time }
+    Scene:
+      type: object
+      required: [id, number, slugline, characters, synopsis, locationName,
+                placeType, timeOfDay, description, purpose, characterIds]
+      properties:
+        id: { type: string, format: uuid }
+        number: { type: integer }
+        slugline: { type: string }
+        characters: { type: array, items: { type: string } }
+        synopsis: { type: string }
+        isKey: { type: boolean }
+        locationName: { type: string }
+        placeType: { type: string, enum: [INT, EXT, NA] }
+        timeOfDay: { type: string, enum: [DAY, NIGHT, OTHER] }
+        plotPoint: { type: string }
+        description: { type: string }
+        purpose: { type: string }
+        subplotId: { type: string, nullable: true }
+        characterIds: { type: array, items: { type: string } }
+    Character:
+      type: object
+      required: [id, name, archetypes, nature, attitude, needGlobal,
+                 needH1, needH2, arc, conflictInternal,
+                 conflictPersonal, conflictExtrapersonal,
+                 relations, paradoxes, biography, voice]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        archetypes: { type: array, items: { type: string } }
+        nature: { type: array, items: { type: string } }
+        attitude: { type: array, items: { type: string } }
+        needGlobal: { type: string }
+        needH1: { type: string }
+        needH2: { type: string }
+        arc: { type: string }
+        conflictInternal: { type: string }
+        conflictPersonal: { type: string }
+        conflictExtrapersonal: { type: string }
+        image:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            src: { type: string, format: uri }
+            name: { type: string }
+        relations:
+          type: array
+          items:
+            type: object
+            required: [id, targetId, description]
+            properties:
+              id: { type: string, format: uuid }
+              targetId: { type: string, format: uuid }
+              description: { type: string }
+        paradoxes: { type: string }
+        biography: { type: string }
+        voice: { type: string }
+    Location:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        notes: { type: string }
+        description: { type: string }
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              src: { type: string, format: uri }
+              name: { type: string }
+        tags: { type: array, items: { type: string } }
+    TurningPoint:
+      type: object
+      required: [id, type, summary]
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [inciting, lockin, midpoint, crisis, climax] }
+        summary: { type: string }
+    Screenplay:
+      type: object
+      required: [id, title, projectId, scenes]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        author: { type: string }
+        projectId: { type: string, format: uuid }
+        synopsis: { type: string }
+        treatmentMd: { type: string }
+        treatmentHtml: { type: string }
+        turningPoints:
+          type: array
+          items: { $ref: '#/components/schemas/TurningPoint' }
+        subplots:
+          type: array
+          items:
+            type: object
+            required: [id, name]
+            properties:
+              id: { type: string, format: uuid }
+              name: { type: string }
+              color: { type: string }
+        scenes:
+          type: array
+          items: { $ref: '#/components/schemas/Scene' }
+        locations:
+          type: array
+          items: { $ref: '#/components/schemas/Location' }
+        characters:
+          type: array
+          items: { $ref: '#/components/schemas/Character' }
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, password]
+              properties:
+                email: { type: string, format: email }
+                name: { type: string }
+                password: { type: string, format: password, minLength: 8 }
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthToken' }
+        '409':
+          description: Email already exists
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthToken' }
+        '401':
+          description: Invalid credentials
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Return authenticated user profile
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '401':
+          description: Unauthorized
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Invalidate current token/session
+      security: [{ bearerAuth: [] }]
+      responses:
+        '204':
+          description: Logged out
+        '401':
+          description: Unauthorized
+
+  /projects:
+    get:
+      tags: [Projects]
+      summary: List user projects
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Project list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Project' }
+        '401':
+          description: Unauthorized
+    post:
+      tags: [Projects]
+      summary: Create a new project
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Project' }
+        '401':
+          description: Unauthorized
+
+  /projects/{projectId}/screenplay:
+    get:
+      tags: [Screenplays]
+      summary: Get screenplay for a project (creates empty one if none)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Screenplay
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Screenplay' }
+        '404':
+          description: Project not found
+    post:
+      tags: [Screenplays]
+      summary: Create screenplay for a project
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+      responses:
+        '201':
+          description: Screenplay created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Screenplay' }
+        '409':
+          description: Screenplay already exists
+        '404':
+          description: Project not found
+
+  /screenplays/{id}:
+    get:
+      tags: [Screenplays]
+      summary: Retrieve screenplay by id
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Screenplay
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Screenplay' }
+        '404':
+          description: Screenplay not found
+    put:
+      tags: [Screenplays]
+      summary: Replace entire screenplay
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Screenplay' }
+      responses:
+        '200':
+          description: Updated screenplay
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Screenplay' }
+        '404':
+          description: Screenplay not found
+    patch:
+      tags: [Screenplays]
+      summary: Update fields of screenplay
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '200':
+          description: Updated screenplay
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Screenplay' }
+        '404':
+          description: Screenplay not found
+
+  /ai/synopsis:
+    post:
+      tags: [AI]
+      summary: Generate synopsis from story idea
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idea, premise, mainTheme, genre]
+              properties:
+                idea: { type: string }
+                premise: { type: string }
+                mainTheme: { type: string }
+                genre: { type: string }
+      responses:
+        '200':
+          description: Generated synopsis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  synopsis: { type: string }
+
+  /ai/turning-point:
+    post:
+      tags: [AI]
+      summary: Propose summary for a turning point
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, context]
+              properties:
+                type: { type: string, enum: [inciting, lockin, midpoint, crisis, climax] }
+                context: { type: string }
+      responses:
+        '200':
+          description: Turning point proposal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary: { type: string }
+
+  /ai/treatment:
+    post:
+      tags: [AI]
+      summary: Generate treatment draft from synopsis
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [synopsis, lang]
+              properties:
+                synopsis: { type: string }
+                lang: { type: string, default: es }
+      responses:
+        '200':
+          description: Treatment draft
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  treatmentMd: { type: string }
+                  treatmentHtml: { type: string }
+
+  /ai/image:
+    post:
+      tags: [AI, Media]
+      summary: Generate an illustrative image
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt, style]
+              properties:
+                prompt: { type: string }
+                style: { type: string }
+      responses:
+        '200':
+          description: Generated image
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string, format: uri }
+
+  /upload:
+    post:
+      tags: [Media]
+      summary: Upload an existing image
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Uploaded file info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string, format: uri }
+                  id: { type: string, format: uuid }
+
+  /ai/scene:
+    post:
+      tags: [AI]
+      summary: Suggest description/purpose for a scene
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [context]
+              properties:
+                context: { type: string }
+      responses:
+        '200':
+          description: Proposed text
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  description: { type: string }
+                  purpose: { type: string }
+
+  /ai/location:
+    post:
+      tags: [AI]
+      summary: Complete location details
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt: { type: string }
+      responses:
+        '200':
+          description: Location completion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name: { type: string }
+                  description: { type: string }
+                  tags: { type: array, items: { type: string } }
+
+  /ai/character:
+    post:
+      tags: [AI]
+      summary: Complete character profile
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt: { type: string }
+      responses:
+        '200':
+          description: Character completion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  archetypes: { type: array, items: { type: string } }
+                  nature: { type: array, items: { type: string } }
+                  attitude: { type: array, items: { type: string } }
+                  needGlobal: { type: string }
+                  needH1: { type: string }
+                  needH2: { type: string }
+                  arc: { type: string }
+                  conflictInternal: { type: string }
+                  conflictPersonal: { type: string }
+                  conflictExtrapersonal: { type: string }
+                  paradoxes: { type: string }
+                  biography: { type: string }
+                  voice: { type: string }

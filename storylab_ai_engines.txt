@@ -1,0 +1,60 @@
+
+StoryLab AI Engines Configuration
+=================================
+
+This document describes the AI models selected for different modes in the StoryLab backend,
+and how the "creative" switch works for scene/dialogue generation.
+
+Text Generation Engines
+------------------------
+
+1. Default Mode (General Writing)
+   - Model: Llama 3.1 8B (Instruct)
+   - Use case: Standard screenplay generation endpoints (`/ai/synopsis`, `/ai/treatment`, `/ai/turning-point`, `/ai/location`, `/ai/character`).
+   - Characteristics: Balanced speed/quality, good in Spanish, low VRAM requirement.
+
+2. Screenwriter Mode (High Quality)
+   - Model: Qwen 2.5 32B (Instruct)
+   - Use case: When high narrative consistency, long context and stylistic quality are required.
+   - Characteristics: Up to 128k context tokens, strong creative writing in Spanish and English.
+
+3. Scene & Dialogue Engines
+   - Default (Controlled Output): OpenHermes (Mistral 7B)
+       * Pros: Consistent Hollywood format, follows structure well, low latency.
+       * Use: `/ai/scene` and `/ai/character` when stable format is required.
+   - Creative Mode: MythoMax 13B
+       * Pros: Very prolific, rich in subtext and improvisation, more expansive.
+       * Use: `/ai/scene?creative=true` or `/ai/character?creative=true` for brainstorming and more dynamic dialogue.
+   - Switch Logic: If `creative=true` parameter is set in API call, route to MythoMax; otherwise use OpenHermes.
+
+Image Generation Engines
+------------------------
+
+- Fast Concept Art: SDXL Turbo (1-4 steps)
+  * Use case: Quick moodboards or illustrative shots for locations and characters.
+  * Fast generation, good for placeholders.
+
+- High Quality Illustrations: SDXL (20-30 steps)
+  * Use case: Final quality renders when time is less critical.
+  * More detail, cleaner results.
+
+Environment Variables
+---------------------
+
+AI_TEXT_DEFAULT=llama3.1:8b
+AI_TEXT_SCREENWRITER=qwen2.5:32b
+AI_TEXT_SCENE_DEFAULT=openhermes:7b
+AI_TEXT_SCENE_CREATIVE=mythomax:13b
+AI_IMAGE_FAST=sdxl-turbo
+AI_IMAGE_QUALITY=sdxl
+
+Routing Summary
+---------------
+- For general text: AI_TEXT_DEFAULT
+- For screenwriter mode: AI_TEXT_SCREENWRITER
+- For scenes/dialogues:
+    * creative=false -> AI_TEXT_SCENE_DEFAULT
+    * creative=true  -> AI_TEXT_SCENE_CREATIVE
+- For images:
+    * fast -> AI_IMAGE_FAST
+    * quality -> AI_IMAGE_QUALITY
